@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  frontend:
+    image: getclass/frontend:latest
+    volumes:
+        - './:/app'
+        - '/app/node_modules'
+    environment:
+        - NODE_ENV=development
+    stdin_open: true
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+          parallelism: 1
+          order: start-first
+    networks:
+        main:
+            aliases:
+                - frontend
+networks:
+  main:
+    external: true
