@@ -1,4 +1,10 @@
-import React, { useEffect } from "react";
+/* eslint-disable react/prop-types */
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+
+import { signUpRequest } from "store/modules/auth/actions";
+
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
@@ -7,6 +13,9 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormLabel from "@material-ui/core/FormLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // core components
 import Header from "components/Header/HeaderLogin.js";
@@ -34,13 +43,63 @@ const selectedPicture = pictureArray[randomIndex];
 
 const useStyles = makeStyles(styles);
 
-export default function LoginPage(props) {
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+export default function RegisterPage(props) {
   const classes = useStyles();
+  const history = useHistory();
   const { ...rest } = props;
 
-  const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
-  const [gender, setGender] = React.useState("masculino");
-  const [register, setRegister] = React.useState("masculino");
+  const [submited, setSubmited] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [cardAnimaton, setCardAnimation] = useState("cardHidden");
+  const [gender, setGender] = useState("0");
+  const [register, setRegister] = useState("0");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passConfirm, setPassConfirm] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+
+  const dispatch = useDispatch();
+
+  function handleSubmit() {
+    if (!email || !password || !passConfirm) {
+      setErrorMessage("Preencha todos os dados");
+      setOpenError(true);
+    } else if (password !== passConfirm) {
+      setErrorMessage("Senhas diferentes");
+      setOpenError(true);
+    } else {
+      setSubmited(true);
+      dispatch(
+        signUpRequest(
+          email,
+          password,
+          passConfirm,
+          firstName,
+          lastName,
+          birthDate,
+          gender,
+          register,
+          history,
+          setSubmited
+        )
+      );
+    }
+  }
+
+  const handleCloseError = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenError(false);
+  };
 
   const handleGender = (event) => {
     setGender(event.target.value);
@@ -57,6 +116,16 @@ export default function LoginPage(props) {
   useEffect(() => {
     window.scrollTo(0, 70);
   }, []);
+
+  useEffect(() => {
+    if (
+      props.history.location.state &&
+      props.history.location.state.submitError
+    ) {
+      setOpenError(true);
+      setErrorMessage("Tente novamente mais tarde");
+    }
+  }, [props]);
 
   return (
     <div>
@@ -90,6 +159,10 @@ export default function LoginPage(props) {
                         <CustomInput
                           labelText="Email"
                           id="email"
+                          value={email}
+                          onChange={(event) => {
+                            setEmail(event.target.value);
+                          }}
                           formControlProps={{
                             fullWidth: true,
                           }}
@@ -101,7 +174,11 @@ export default function LoginPage(props) {
                       <GridItem xs={12} sm={12} md={6} lg={6}>
                         <CustomInput
                           labelText="Senha"
-                          id="pass"
+                          id="password"
+                          value={password}
+                          onChange={(event) => {
+                            setPassword(event.target.value);
+                          }}
                           formControlProps={{
                             fullWidth: true,
                           }}
@@ -115,6 +192,10 @@ export default function LoginPage(props) {
                         <CustomInput
                           labelText="Confirme a senha"
                           id="pass-confirm"
+                          value={passConfirm}
+                          onChange={(event) => {
+                            setPassConfirm(event.target.value);
+                          }}
                           formControlProps={{
                             fullWidth: true,
                           }}
@@ -128,6 +209,10 @@ export default function LoginPage(props) {
                         <CustomInput
                           labelText="Nome"
                           id="name"
+                          value={firstName}
+                          onChange={(event) => {
+                            setFirstName(event.target.value);
+                          }}
                           formControlProps={{
                             fullWidth: true,
                           }}
@@ -140,6 +225,10 @@ export default function LoginPage(props) {
                         <CustomInput
                           labelText="Sobrenome"
                           id="second_name"
+                          value={lastName}
+                          onChange={(event) => {
+                            setLastName(event.target.value);
+                          }}
                           formControlProps={{
                             fullWidth: true,
                           }}
@@ -153,6 +242,10 @@ export default function LoginPage(props) {
                           id="date"
                           label="Data de Nascimento"
                           type="date"
+                          value={birthDate}
+                          onChange={(event) => {
+                            setBirthDate(event.target.value);
+                          }}
                           className={classes.textField}
                           InputLabelProps={{
                             shrink: true,
@@ -180,19 +273,19 @@ export default function LoginPage(props) {
                             }}
                           >
                             <FormControlLabel
-                              value="masculino"
+                              value="0"
                               control={<Radio color="primary" />}
                               label="Masculino"
                               style={{ fontSize: "14px" }}
                             />
                             <FormControlLabel
-                              value="feminino"
+                              value="1"
                               control={<Radio color="primary" />}
                               label="Feminino"
                               style={{ fontSize: "14px" }}
                             />
                             <FormControlLabel
-                              value="outro"
+                              value="2"
                               control={<Radio color="primary" />}
                               label="Outro"
                               style={{ fontSize: "14px" }}
@@ -220,13 +313,13 @@ export default function LoginPage(props) {
                             }}
                           >
                             <FormControlLabel
-                              value="student"
+                              value="0"
                               control={<Radio color="primary" />}
                               label="Aluno"
                               style={{ fontSize: "14px" }}
                             />
                             <FormControlLabel
-                              value="teacher"
+                              value="1"
                               control={<Radio color="primary" />}
                               label="Professor"
                               style={{ fontSize: "14px" }}
@@ -236,10 +329,31 @@ export default function LoginPage(props) {
                       </GridItem>
                     </GridContainer>
                   </CardBody>
+
+                  <Snackbar
+                    open={openError}
+                    autoHideDuration={3000}
+                    onClose={handleCloseError}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  >
+                    <Alert onClose={handleCloseError} severity="error">
+                      Ocorreu um erro! {errorMessage}
+                    </Alert>
+                  </Snackbar>
+
                   <CardFooter className={classes.cardFooter}>
-                    <Button simple color="primary" size="lg">
-                      Registrar
-                    </Button>
+                    {submited ? (
+                      <CircularProgress />
+                    ) : (
+                      <Button
+                        simple
+                        color="primary"
+                        size="lg"
+                        onClick={handleSubmit}
+                      >
+                        Registrar
+                      </Button>
+                    )}
                   </CardFooter>
                 </form>
               </Card>

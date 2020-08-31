@@ -6,6 +6,8 @@ cp ./package.json ./docker/
 
 docker build -t getclass/frontend:$1 docker/
 
+docker push getclass/frontend:$1
+
 if [[ ! $(docker service ls | grep gcl_frontend) = "" ]]; then
   docker service update gcl_frontend --image getclass/frontend:$1
 else

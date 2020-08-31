@@ -1,7 +1,9 @@
 /*eslint-disable*/
 import React from "react";
+import { useDispatch } from "react-redux";
 // react components for routing our app without refresh
 import { useHistory } from "react-router-dom";
+import { signOut } from "store/modules/auth/actions";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,6 +20,11 @@ const useStyles = makeStyles(styles);
 export default function HeaderLinks(props) {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  function handleLogout() {
+    dispatch(signOut(history));
+  }
 
   const navigateLanding = (event) => {
     event.preventDefault();
@@ -43,7 +50,7 @@ export default function HeaderLinks(props) {
         </Button>
         <Button
           color="danger"
-          onClick={navigateLanding}
+          onClick={handleLogout}
           className={classes.navLinkLogout}
         >
           Sair

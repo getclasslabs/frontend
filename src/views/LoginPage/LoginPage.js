@@ -1,9 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
+
+import { signInRequest } from 'store/modules/auth/actions';
+
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 // @material-ui/icons
 import Email from "@material-ui/icons/Email";
 // core components
@@ -32,6 +39,10 @@ const selectedPicture = pictureArray[randomIndex];
 
 const useStyles = makeStyles(styles);
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 export default function LoginPage(props) {
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
 
@@ -39,6 +50,32 @@ export default function LoginPage(props) {
   const history = useHistory();
 
   const { ...rest } = props;
+
+  const [submited, setSubmited] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch();
+
+  function handleSubmit() {
+    if (!email || !password) {
+      setErrorMessage("Preencha todos os dados")
+      setOpenError(true);
+    } else {
+      setSubmited(true);
+      dispatch(signInRequest(email, password, history, setSubmited));
+    }
+  }
+
+  const handleCloseError = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenError(false);
+  };
 
   setTimeout(function () {
     setCardAnimation("");
@@ -48,10 +85,12 @@ export default function LoginPage(props) {
     window.scrollTo(0, 0);
   }, []);
 
-  const navigateProfile = (event) => {
-    event.preventDefault();
-    history.push("/profile-page");
-  };
+  useEffect(() => {
+    if(props.history.location.state && props.history.location.state.submitError) {
+      setOpenError(true);
+      setErrorMessage("Tente novamente mais tarde")
+    }
+  }, [props]);
 
   return (
     <div>
@@ -83,6 +122,8 @@ export default function LoginPage(props) {
                     <CustomInput
                       labelText="Email"
                       id="email"
+                      value={email}
+                      onChange={(event) => {setEmail(event.target.value)}}
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -97,7 +138,9 @@ export default function LoginPage(props) {
                     />
                     <CustomInput
                       labelText="Senha"
-                      id="pass"
+                      id="password"
+                      value={password}
+                      onChange={(event) => {setPassword(event.target.value)}}
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -114,15 +157,28 @@ export default function LoginPage(props) {
                       }}
                     />
                   </CardBody>
+
+                  <Snackbar open={openError} autoHideDuration={3000} onClose={handleCloseError} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+                    <Alert onClose={handleCloseError} severity="error">
+                      Ocorreu um erro! {errorMessage}
+                    </Alert>
+                  </Snackbar>
+
                   <CardFooter className={classes.cardFooter}>
+
+                  {submited ? 
+                    <CircularProgress />
+                    :
                     <Button
                       simple
                       color="primary"
                       size="lg"
-                      onClick={navigateProfile}
+                      onClick={handleSubmit}
                     >
                       Acessar
                     </Button>
+                  }
+
                   </CardFooter>
                 </form>
               </Card>
