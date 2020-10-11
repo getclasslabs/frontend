@@ -1,0 +1,114 @@
+import React from "react";
+// nodejs library that concatenates classes
+import classNames from "classnames";
+// @material-ui/core components
+import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
+
+// core components
+import Header from "components/Header/HeaderLogin.js";
+import Footer from "components/Footer/FooterLogin.js";
+import GridContainer from "components/Grid/GridContainer.js";
+import GridItem from "components/Grid/GridItem.js";
+import Button from "components/CustomButtons/Button.js";
+import HeaderLinks from "components/Header/HeaderLinksUser.js";
+import Parallax from "components/Parallax/Parallax.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
+
+import styles from "assets/jss/material-kit-react/views/homePage.js";
+
+// Sections for this page
+import Categories from "./Sections/CategoriesSection.js";
+import Courses from "./Sections/CoursesSection.js";
+
+import image2 from "assets/img/background/2.jpg";
+import image4 from "assets/img/background/4.jpg";
+
+const pictureArray = [image2, image4];
+const randomIndex = Math.floor(Math.random() * pictureArray.length);
+const selectedPicture = pictureArray[randomIndex];
+
+const dashboardRoutes = [];
+
+const useStyles = makeStyles(styles);
+
+export default function HomePage(props) {
+  const classes = useStyles();
+  const history = useHistory();
+  const { ...rest } = props;
+
+  const navigateSearch = (event) => {
+    event.preventDefault();
+    history.push("/results");
+  };
+
+  return (
+    <div>
+      <Header
+        color="transparent"
+        routes={dashboardRoutes}
+        brand="Material Kit React"
+        rightLinks={<HeaderLinks />}
+        fixed
+        changeColorOnScroll={{
+          height: 400,
+          color: "white",
+        }}
+        {...rest}
+      />
+      <Parallax filter image={selectedPicture}>
+        <div
+          className={classes.container}
+          style={{
+            backgroundColor: "RGB(255,255,255,0.1)",
+            borderRadius: "4px",
+          }}
+        >
+          <GridContainer>
+            <GridItem xs={12} sm={12} md={12}>
+              <h1 className={classes.title}>
+                Comece seus estudos buscando por algo novo...
+              </h1>
+            </GridItem>
+          </GridContainer>
+          <GridContainer alignItems="alignItems">
+            <GridItem xs={12} sm={12} md={10}>
+              <CustomInput
+                labelText="Digite algo que deseje buscar"
+                id="search"
+                white
+                // value={email}
+                // onChange={(event) => {
+                //   setEmail(event.target.value);
+                // }}
+                formControlProps={{
+                  fullWidth: true,
+                }}
+                style={{
+                  paddingLeft: "10px",
+                }}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={12} md={2}>
+              <Button
+                color="primary"
+                size="lg"
+                rel="noopener noreferrer"
+                onClick={navigateSearch}
+              >
+                Buscar
+              </Button>
+            </GridItem>
+          </GridContainer>
+        </div>
+      </Parallax>
+      <div className={classNames(classes.main, classes.mainRaised)}>
+        <div className={classes.container}>
+          <Categories />
+          <Courses />
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}

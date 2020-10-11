@@ -32,14 +32,6 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
 
 import image1 from "assets/img/background/1.jpg";
-import image2 from "assets/img/background/2.jpg";
-import image3 from "assets/img/background/3.jpg";
-import image4 from "assets/img/background/4.jpg";
-import image5 from "assets/img/background/5.jpg";
-
-const pictureArray = [image1, image2, image3, image4, image5];
-const randomIndex = Math.floor(Math.random() * pictureArray.length);
-const selectedPicture = pictureArray[randomIndex];
 
 const useStyles = makeStyles(styles);
 
@@ -139,7 +131,7 @@ export default function RegisterPage(props) {
       <div
         className={classes.pageHeader}
         style={{
-          backgroundImage: "url(" + selectedPicture + ")",
+          backgroundImage: "url(" + image1 + ")",
           backgroundSize: "cover",
           backgroundPosition: "top center",
         }}

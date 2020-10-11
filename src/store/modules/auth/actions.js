@@ -5,12 +5,12 @@ export function signInRequest(email, password, history, setSubmited) {
   };
 }
 
-// export function signInSuccess(token, user) {
-export function signInSuccess(message) {
+export function signInSuccess(token, user) {
+  // export function signInSuccess(message) {
   return {
     type: "@auth/SIGN_IN_SUCCESS",
-    payload: { message },
-    // payload: { token, user },
+    // payload: { message },
+    payload: { token, user },
   };
 }
 

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 
 // nodejs library that concatenates classes
@@ -14,8 +14,6 @@ import Divider from "@material-ui/core/Divider";
 import Box from "@material-ui/core/Box";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import Rating from "@material-ui/lab/Rating";
-import MuiAlert from "@material-ui/lab/Alert";
-import Snackbar from "@material-ui/core/Snackbar";
 // @material-ui/icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import SchoolIcon from "@material-ui/icons/School";
@@ -27,11 +25,9 @@ import Footer from "components/Footer/FooterLogin.js";
 import Button from "components/CustomButtons/Button.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import HeaderLinks from "components/Header/HeaderLinksProfile.js";
+import HeaderLinks from "components/Header/HeaderLinksUser.js";
 import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
-
-import { signOut } from "store/modules/auth/actions";
 
 import api from "services/api";
 
@@ -52,39 +48,32 @@ const StyledRating = withStyles({
   },
 })(Rating);
 
-export default function ProfilePage(props) {
+export default function VisitorPage(props) {
   const classes = useStyles();
-  const dispatch = useDispatch();
-
   const history = useHistory();
-  const userLogged = useSelector((state) => state.user.profile);
   const { nickname } = useParams();
 
-  const [user, setUser] = useState(false);
+  const userLogged = useSelector((state) => state.user.profile);
+  const [user, setUser] = useState({});
 
   useEffect(() => {
     async function getUserByNickname() {
-      const response = await api.get(`user/u/${userLogged.nickname}`, {
-        headers: { Authorization: `Bearer ${userLogged.jwt}` },
+      const response = await api.get(`user/u/${nickname}`, {
+        headers: { Authorization: "Bearer " + userLogged.jwt },
       });
 
       setUser(response.data);
 
-      if (Object.keys(response.data).length === 0) {
-        dispatch(signOut(history));
+      if (
+        nickname === userLogged.nickname ||
+        Object.keys(response.data).length === 0
+      ) {
+        history.push(`/me/${userLogged.nickname}`);
       }
-    }
-    if (userLogged.nickname && nickname !== userLogged.nickname) {
-      history.push(`/profile/${nickname}`);
     }
 
     getUserByNickname();
   }, []);
-
-  const [openError, setOpenError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [openSuccess, setOpenSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   const { ...rest } = props;
   const imageClasses = classNames(
@@ -92,10 +81,6 @@ export default function ProfilePage(props) {
     classes.imgRoundedCircle,
     classes.imgFluid
   );
-
-  function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
 
   function calculate_age(date) {
     var today = new Date();
@@ -239,33 +224,6 @@ export default function ProfilePage(props) {
       ),
     },
   ];
-
-  useEffect(() => {
-    if (
-      props.history.location.state &&
-      props.history.location.state.submitError
-    ) {
-      setOpenError(true);
-      setErrorMessage("Tente novamente mais tarde");
-    }
-
-    if (
-      props.history.location.state &&
-      props.history.location.state.submitSuccess
-    ) {
-      setOpenSuccess(true);
-      setSuccessMessage("Perfil atualizado com sucesso");
-    }
-  }, [props]);
-
-  const handleCloseAlert = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenError(false);
-    setOpenSuccess(false);
-  };
 
   return (
     <div>
@@ -470,27 +428,6 @@ export default function ProfilePage(props) {
           </div>
         </div>
       </div>
-      <Snackbar
-        open={openError}
-        autoHideDuration={3000}
-        onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert onClose={handleCloseAlert} severity="error">
-          Ocorreu um erro! {errorMessage}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={openSuccess}
-        autoHideDuration={3000}
-        onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert onClose={handleCloseAlert} severity="success">
-          {successMessage}
-        </Alert>
-      </Snackbar>
       <Footer />
     </div>
   );

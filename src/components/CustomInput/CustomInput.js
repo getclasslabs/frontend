@@ -19,6 +19,7 @@ export default function CustomInput(props) {
     formControlProps,
     labelText,
     id,
+    multiline,
     value,
     onChange,
     labelProps,
@@ -26,25 +27,27 @@ export default function CustomInput(props) {
     error,
     white,
     inputRootCustomClasses,
-    success
+    success,
+    style,
+    readOnly,
   } = props;
 
   const labelClasses = classNames({
     [" " + classes.labelRootError]: error,
-    [" " + classes.labelRootSuccess]: success && !error
+    [" " + classes.labelRootSuccess]: success && !error,
   });
   const underlineClasses = classNames({
     [classes.underlineError]: error,
     [classes.underlineSuccess]: success && !error,
     [classes.underline]: true,
-    [classes.whiteUnderline]: white
+    [classes.whiteUnderline]: white,
   });
   const marginTop = classNames({
-    [inputRootCustomClasses]: inputRootCustomClasses !== undefined
+    [inputRootCustomClasses]: inputRootCustomClasses !== undefined,
   });
   const inputClasses = classNames({
     [classes.input]: true,
-    [classes.whiteInput]: white
+    [classes.whiteInput]: white,
   });
   var formControlClasses;
   if (formControlProps !== undefined) {
@@ -71,11 +74,15 @@ export default function CustomInput(props) {
           input: inputClasses,
           root: marginTop,
           disabled: classes.disabled,
-          underline: underlineClasses
+          underline: underlineClasses,
         }}
+        multiline={multiline}
         id={id}
         value={value}
         onChange={onChange}
+        style={style}
+        variant="filled"
+        readOnly={readOnly}
         {...inputProps}
       />
     </FormControl>
@@ -86,10 +93,15 @@ CustomInput.propTypes = {
   labelText: PropTypes.node,
   labelProps: PropTypes.object,
   id: PropTypes.string,
+  multiline: PropTypes.bool,
+  readOnly: PropTypes.bool,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  onChange: PropTypes.func,
   inputProps: PropTypes.object,
   formControlProps: PropTypes.object,
+  style: PropTypes.object,
   inputRootCustomClasses: PropTypes.string,
   error: PropTypes.bool,
   success: PropTypes.bool,
-  white: PropTypes.bool
+  white: PropTypes.bool,
 };

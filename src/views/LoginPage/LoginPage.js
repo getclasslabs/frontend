@@ -1,16 +1,17 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import { signInRequest } from 'store/modules/auth/actions';
+import { signInRequest } from "store/modules/auth/actions";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+import CircularProgress from "@material-ui/core/CircularProgress";
 // @material-ui/icons
 import Email from "@material-ui/icons/Email";
 // core components
@@ -28,14 +29,6 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
 
 import image1 from "assets/img/background/1.jpg";
-import image2 from "assets/img/background/2.jpg";
-import image3 from "assets/img/background/3.jpg";
-import image4 from "assets/img/background/4.jpg";
-import image5 from "assets/img/background/5.jpg";
-
-const pictureArray = [image1, image2, image3, image4, image5];
-const randomIndex = Math.floor(Math.random() * pictureArray.length);
-const selectedPicture = pictureArray[randomIndex];
 
 const useStyles = makeStyles(styles);
 
@@ -61,7 +54,7 @@ export default function LoginPage(props) {
 
   function handleSubmit() {
     if (!email || !password) {
-      setErrorMessage("Preencha todos os dados")
+      setErrorMessage("Preencha todos os dados");
       setOpenError(true);
     } else {
       setSubmited(true);
@@ -70,7 +63,7 @@ export default function LoginPage(props) {
   }
 
   const handleCloseError = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
@@ -86,9 +79,12 @@ export default function LoginPage(props) {
   }, []);
 
   useEffect(() => {
-    if(props.history.location.state && props.history.location.state.submitError) {
+    if (
+      props.history.location.state &&
+      props.history.location.state.submitError
+    ) {
       setOpenError(true);
-      setErrorMessage("Tente novamente mais tarde")
+      setErrorMessage("Tente novamente mais tarde");
     }
   }, [props]);
 
@@ -104,7 +100,7 @@ export default function LoginPage(props) {
       <div
         className={classes.pageHeader}
         style={{
-          backgroundImage: "url(" + selectedPicture + ")",
+          backgroundImage: "url(" + image1 + ")",
           backgroundSize: "cover",
           backgroundPosition: "top center",
         }}
@@ -123,7 +119,9 @@ export default function LoginPage(props) {
                       labelText="Email"
                       id="email"
                       value={email}
-                      onChange={(event) => {setEmail(event.target.value)}}
+                      onChange={(event) => {
+                        setEmail(event.target.value);
+                      }}
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -140,7 +138,9 @@ export default function LoginPage(props) {
                       labelText="Senha"
                       id="password"
                       value={password}
-                      onChange={(event) => {setPassword(event.target.value)}}
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                      }}
                       formControlProps={{
                         fullWidth: true,
                       }}
@@ -158,27 +158,30 @@ export default function LoginPage(props) {
                     />
                   </CardBody>
 
-                  <Snackbar open={openError} autoHideDuration={3000} onClose={handleCloseError} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+                  <Snackbar
+                    open={openError}
+                    autoHideDuration={3000}
+                    onClose={handleCloseError}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  >
                     <Alert onClose={handleCloseError} severity="error">
                       Ocorreu um erro! {errorMessage}
                     </Alert>
                   </Snackbar>
 
                   <CardFooter className={classes.cardFooter}>
-
-                  {submited ? 
-                    <CircularProgress />
-                    :
-                    <Button
-                      simple
-                      color="primary"
-                      size="lg"
-                      onClick={handleSubmit}
-                    >
-                      Acessar
-                    </Button>
-                  }
-
+                    {submited ? (
+                      <CircularProgress />
+                    ) : (
+                      <Button
+                        simple
+                        color="primary"
+                        size="lg"
+                        onClick={handleSubmit}
+                      >
+                        Acessar
+                      </Button>
+                    )}
                   </CardFooter>
                 </form>
               </Card>

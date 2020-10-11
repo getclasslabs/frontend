@@ -17,9 +17,9 @@ export function* signIn({ payload }) {
 
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
-    yield put(signInSuccess(token, null));
+    yield put(signInSuccess(token, response.data));
 
-    history.push("/profile");
+    history.push("/home");
   } catch (err) {
     setSubmited(false);
     history.push("/login", { submitError: true });

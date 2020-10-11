@@ -22,38 +22,24 @@ export default function HeaderLinks(props) {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  function handleLogout() {
-    dispatch(signOut(history));
-  }
-
-  const navigateHome = (event) => {
-    event.preventDefault();
-    history.push("/home");
-  };
+  const { handleSave } = props;
 
   return (
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
         <Button
-          color="transparent"
-          className={classes.navLink}
-          onClick={navigateHome}
-          >
-          Home
-        </Button>
-        <Button
           color="primary"
-          onClick={(e) => history.push("/profile/edit")}
+          onClick={handleSave}
           className={classes.navLinkLogout}
         >
-          Editar
+          Salvar
         </Button>
         <Button
           color="danger"
-          onClick={handleLogout}
+          onClick={(e) => history.push("/profile")}
           className={classes.navLinkLogout}
         >
-          Sair
+          Cancelar
         </Button>
       </ListItem>
     </List>
