@@ -35,8 +35,6 @@ import { signOut } from "store/modules/auth/actions";
 
 import api from "services/api";
 
-import profile from "assets/img/faces/matheus.png";
-
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 
 import image1 from "assets/img/background/1.jpg";
@@ -288,7 +286,13 @@ export default function ProfilePage(props) {
               <GridItem xs={12} sm={12} md={6}>
                 <div className={classes.profile}>
                   <div>
-                    <img src={profile} alt="..." className={imageClasses} />
+                    <img
+                      src={`http://localhost:3000/user/images/${
+                        user.photo_path ? user.photo_path : "default.png"
+                      }`}
+                      alt="..."
+                      className={imageClasses}
+                    />
                   </div>
                   <div className={classes.name}>
                     <h3

@@ -65,7 +65,7 @@ export default function CoursesView(props) {
               >
                 {classId !== 0 ? (
                   <Jutsu
-                    roomName={`gcl-curso-${classId}#config.startWithVideoMuted=true&interfaceConfig.TOOLBAR_BUTTONS=%5B%22microphone%22%2C%22camera%22%2C%22chat%22%2C%22desktop%22%2C%22fullscreen%22%2C%22hangup%22%2C%22profile%22%2C%22settings%22%2C%22videoquality%22%5D&interfaceConfig.SETTINGS_SECTIONS=%5B%22devices%22%2C%22language%22%5D`}
+                    roomName={`gcl-curso-${classId}#config.startWithVideoMuted=true&interfaceConfig.TOOLBAR_BUTTONS=%5B%22microphone%22%2C%22camera%22%2C%22raisehand%22%2C%22chat%22%2C%22desktop%22%2C%22fullscreen%22%2C%22hangup%22%2C%22profile%22%2C%22settings%22%2C%22videoquality%22%5D&interfaceConfig.SETTINGS_SECTIONS=%5B%22devices%22%2C%22language%22%5D`}
                     displayName={"Matheus"}
                     password="abc123"
                     onMeetingEnd={() => history.goBack()}

@@ -26,13 +26,12 @@ import HeaderLinks from "components/Header/HeaderLinksProfileEdit.js";
 import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
+import PhotoUploader from "components/Upload/Photo";
 
 import { updateProfileSuccess } from "store/modules/user/actions";
 import { signOut } from "store/modules/auth/actions";
 
 import api from "services/api";
-
-import profile from "assets/img/faces/matheus.png";
 
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 
@@ -50,6 +49,7 @@ export default function ProfilePageEdit(props) {
 
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
+  const [photo, setPhoto] = useState("");
   const [password, setPassword] = useState("");
   const [passConfirm, setPassConfirm] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -72,6 +72,11 @@ export default function ProfilePageEdit(props) {
   function updateInfo(data) {
     setEmail(data.email);
     setNickname(data.nickname);
+    setPhoto(
+      data.photo_path !== "" && data.photo_path !== null
+        ? `http://localhost:3000/user/images/${data.photo_path}`
+        : null
+    );
     setPassword("");
     setPassConfirm("");
     setFirstName(data.first_name);
@@ -98,7 +103,7 @@ export default function ProfilePageEdit(props) {
       });
 
       updateInfo(response.data);
-
+      console.log(response.data);
       if (Object.keys(response.data).length === 0) {
         history.push("");
         dispatch(signOut(history));
@@ -109,11 +114,6 @@ export default function ProfilePageEdit(props) {
   }, []);
 
   const { ...rest } = props;
-  const imageClasses = classNames(
-    classes.imgRaised,
-    classes.imgRoundedCircle,
-    classes.imgFluid
-  );
 
   const handleGender = (event) => {
     setGender(event.target.value);
@@ -196,10 +196,7 @@ export default function ProfilePageEdit(props) {
               <GridItem xs={12} sm={12} md={6}>
                 <div className={classes.profile}>
                   <div>
-                    <img src={profile} alt="..." className={imageClasses} />
-                  </div>
-                  <div className={classes.name}>
-                    <h6>{userLogged.register === 0 ? "ALUNO" : "PROFESSOR"}</h6>
+                    <PhotoUploader image={photo} />
                   </div>
                 </div>
               </GridItem>

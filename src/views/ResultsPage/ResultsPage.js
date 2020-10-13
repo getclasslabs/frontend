@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // @material-ui/core components
@@ -9,6 +11,7 @@ import { useHistory } from "react-router-dom";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import SchoolIcon from "@material-ui/icons/School";
 import StyleIcon from "@material-ui/icons/Style";
+import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 
 // core components
 import Header from "components/Header/HeaderLogin.js";
@@ -33,6 +36,8 @@ import violaoImage from "assets/img/category/violao.jpg";
 import esportesImage from "assets/img/category/esportes.jpg";
 import quimicaImage from "assets/img/category/quimica.jpg";
 
+import api from "services/api";
+
 const pictureArray = [image2, image4];
 const randomIndex = Math.floor(Math.random() * pictureArray.length);
 const selectedPicture = pictureArray[randomIndex];
@@ -42,14 +47,40 @@ const dashboardRoutes = [];
 const useStyles = makeStyles(styles);
 
 export default function ResultsPage(props) {
+  const userLogged = useSelector((state) => state.user.profile);
+
   const classes = useStyles();
   const history = useHistory();
+  const location = useLocation();
   const { ...rest } = props;
 
-  const navigateSearch = (event) => {
-    event.preventDefault();
-    history.push("/results");
-  };
+  const [search, setSearch] = useState("");
+  const [newSearch, setNewSearch] = useState("");
+  const [teachers, setTeachers] = useState([]);
+
+  function navigateSearch() {
+    setSearch(newSearch);
+  }
+
+  useEffect(() => {
+    if (location.state && location.state.search) {
+      setSearch(location.state.search);
+      setNewSearch(location.state.search);
+    } else if ((location.state && !location.state.search) || !location.state) {
+      history.push("/home");
+    }
+  }, [location]);
+
+  useEffect(() => {
+    async function searchTeacher() {
+      const response = await api.get(`user/search/teacher?name=${search}`, {
+        headers: { Authorization: `Bearer ${userLogged.jwt}` },
+      });
+      setTeachers(response.data);
+    }
+
+    searchTeacher();
+  }, [search]);
 
   return (
     <div>
@@ -79,10 +110,10 @@ export default function ResultsPage(props) {
                 labelText="Digite algo que deseje buscar"
                 id="search"
                 white
-                // value={email}
-                // onChange={(event) => {
-                //   setEmail(event.target.value);
-                // }}
+                value={newSearch}
+                onChange={(event) => {
+                  setNewSearch(event.target.value);
+                }}
                 formControlProps={{
                   fullWidth: true,
                 }}
@@ -219,61 +250,78 @@ export default function ResultsPage(props) {
                   {
                     tabButton: "Professores",
                     tabIcon: AccountCircleIcon,
-                    tabContent: (
-                      <>
-                        <GridContainer justify="center">
-                          <GridItem xs={12} sm={12} md={8}>
-                            <GridContainer>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
-                              >
-                                <CardTeacher
-                                  image={violaoImage}
-                                  name="Matheus"
-                                />
-                              </GridItem>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
-                              >
-                                <CardTeacher
-                                  image={esportesImage}
-                                  name="Matheus"
-                                />
-                              </GridItem>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
-                              >
-                                <CardTeacher
-                                  image={quimicaImage}
-                                  name="Matheus"
-                                />
-                              </GridItem>
-                            </GridContainer>
-                          </GridItem>
-                        </GridContainer>
+                    tabContent:
+                      teachers.length !== 0 ? (
+                        <>
+                          <GridContainer justify="center">
+                            <GridItem xs={12} sm={12} md={8}>
+                              <GridContainer>
+                                {teachers.map((teacher) => (
+                                  <GridItem
+                                    cs={12}
+                                    sm={12}
+                                    md={6}
+                                    style={{ marginBottom: "20px" }}
+                                    key={teacher.nickname}
+                                  >
+                                    <CardTeacher
+                                      image={`http://localhost:3000/user/images/${
+                                        teacher.photo_path
+                                          ? teacher.photo_path
+                                          : "default.png"
+                                      }`}
+                                      name={`${teacher.first_name} ${teacher.last_name}`}
+                                      description={teacher.description}
+                                      onClick={() =>
+                                        teacher.nickname === userLogged.nickname
+                                          ? history.push(
+                                              `me/${teacher.nickname}`
+                                            )
+                                          : history.push(
+                                              `profile/${teacher.nickname}`
+                                            )
+                                      }
+                                    />
+                                  </GridItem>
+                                ))}
+                              </GridContainer>
+                            </GridItem>
+                          </GridContainer>
+                          <GridContainer
+                            justify="center"
+                            style={{ marginTop: "20px" }}
+                          >
+                            <Paginations
+                              pages={[
+                                { text: "Anterior" },
+                                { active: true, text: 3 },
+                                { text: "Próxima" },
+                              ]}
+                            />
+                          </GridContainer>
+                        </>
+                      ) : (
                         <GridContainer
                           justify="center"
-                          style={{ marginTop: "20px" }}
+                          style={{ marginTop: 20 }}
                         >
-                          <Paginations
-                            pages={[
-                              { text: "Anterior" },
-                              { active: true, text: 3 },
-                              { text: "Próxima" },
-                            ]}
-                          />
+                          <GridItem xs={12} sm={12} md={8}>
+                            <h2
+                              style={{
+                                color: "#3C4858",
+                                textAlign: "center",
+                              }}
+                            >
+                              Não encontramos nenhum resultado...
+                            </h2>
+                            <div style={{ flex: 1, margin: "0 45%" }}>
+                              <SentimentVeryDissatisfiedIcon
+                                style={{ fontSize: 80, color: "#3C4858" }}
+                              />
+                            </div>
+                          </GridItem>
                         </GridContainer>
-                      </>
-                    ),
+                      ),
                   },
                 ]}
               />

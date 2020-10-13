@@ -10,7 +10,7 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 
 export default function CustomCard(props) {
-  const { image, name, maxWidth } = props;
+  const { image, name, description, maxWidth, onClick } = props;
   const useStyles = makeStyles({
     root: {
       maxWidth: maxWidth ?? null,
@@ -20,7 +20,7 @@ export default function CustomCard(props) {
   const classes = useStyles();
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} onClick={onClick}>
       <CardActionArea>
         <CardContent>
           <GridContainer>
@@ -35,12 +35,16 @@ export default function CustomCard(props) {
               />
             </GridItem>
             <GridItem xs={12} sm={12} md={8}>
-              <Typography gutterBottom variant="h5" component="h2">
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="h2"
+                style={{ fontSize: 16 }}
+              >
                 {name}
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
-                Lizards are a widespread group of squamate reptiles, with over
-                6,000 species, ranging across all continents except Antarctica
+                {description}
               </Typography>
             </GridItem>
           </GridContainer>
@@ -53,5 +57,7 @@ export default function CustomCard(props) {
 CustomCard.propTypes = {
   image: PropTypes.object,
   name: PropTypes.string,
+  description: PropTypes.string,
+  onClick: PropTypes.func,
   maxWidth: PropTypes.number,
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // @material-ui/core components
@@ -37,9 +37,14 @@ export default function HomePage(props) {
   const history = useHistory();
   const { ...rest } = props;
 
+  const [search, setSearch] = useState("");
+
   const navigateSearch = (event) => {
     event.preventDefault();
-    history.push("/results");
+    history.push({
+      pathname: "/results",
+      state: { search: search },
+    });
   };
 
   return (
@@ -77,10 +82,10 @@ export default function HomePage(props) {
                 labelText="Digite algo que deseje buscar"
                 id="search"
                 white
-                // value={email}
-                // onChange={(event) => {
-                //   setEmail(event.target.value);
-                // }}
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
                 formControlProps={{
                   fullWidth: true,
                 }}
