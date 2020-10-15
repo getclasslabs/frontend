@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // nodejs library to set properties for components
@@ -15,11 +16,16 @@ import Menu from "@material-ui/icons/Menu";
 // core components
 import styles from "assets/jss/material-kit-react/components/headerStyle.js";
 
+import logo from "assets/img/logo.png";
+import logoWhite from "assets/img/logo-white.png";
+
 const useStyles = makeStyles(styles);
 
 export default function Header(props) {
   const classes = useStyles();
+  const history = useHistory();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [white, setWhite] = React.useState(true);
   React.useEffect(() => {
     if (props.changeColorOnScroll) {
       window.addEventListener("scroll", headerColorChange);
@@ -43,6 +49,7 @@ export default function Header(props) {
       document.body
         .getElementsByTagName("header")[0]
         .classList.add(classes[changeColorOnScroll.color]);
+      setWhite(false);
     } else {
       document.body
         .getElementsByTagName("header")[0]
@@ -50,6 +57,7 @@ export default function Header(props) {
       document.body
         .getElementsByTagName("header")[0]
         .classList.remove(classes[changeColorOnScroll.color]);
+      setWhite(true);
     }
   };
   const { color, rightLinks, leftLinks, fixed, absolute } = props;
@@ -62,7 +70,16 @@ export default function Header(props) {
   return (
     <AppBar className={appBarClasses}>
       <Toolbar className={classes.container}>
-        <div className={classes.flex}>{/* LOGO */}</div>
+        <div className={classes.flex} onClick={() => history.push("/home")}>
+          <img
+            src={white ? logoWhite : logo}
+            style={{
+              maxHeight: "70px",
+              borderRadius: 10,
+              cursor: "pointer",
+            }}
+          />
+        </div>
         <Hidden smDown implementation="css">
           {rightLinks}
         </Hidden>

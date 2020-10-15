@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 // react components for routing our app without refresh
 import { useHistory } from "react-router-dom";
 import { signOut } from "store/modules/auth/actions";
@@ -18,9 +18,9 @@ import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js
 const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
+  const userLogged = useSelector((state) => state.user.profile);
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const { handleSave } = props;
 
@@ -36,7 +36,7 @@ export default function HeaderLinks(props) {
         </Button>
         <Button
           color="danger"
-          onClick={(e) => history.push("/profile")}
+          onClick={(e) => history.push(`/me/${userLogged.nickname}`)}
           className={classes.navLinkLogout}
         >
           Cancelar

@@ -56,10 +56,23 @@ export default function ResultsPage(props) {
 
   const [search, setSearch] = useState("");
   const [newSearch, setNewSearch] = useState("");
+
   const [teachers, setTeachers] = useState([]);
+  const [teachersPage, setTeachersPage] = useState(1);
 
   function navigateSearch() {
+    setTeachersPage(1);
     setSearch(newSearch);
+  }
+
+  async function searchTeacher() {
+    const response = await api.get(
+      `user/search/teacher?name=${search}&page=${teachersPage}`,
+      {
+        headers: { Authorization: `Bearer ${userLogged.jwt}` },
+      }
+    );
+    setTeachers(response.data);
   }
 
   useEffect(() => {
@@ -72,15 +85,8 @@ export default function ResultsPage(props) {
   }, [location]);
 
   useEffect(() => {
-    async function searchTeacher() {
-      const response = await api.get(`user/search/teacher?name=${search}`, {
-        headers: { Authorization: `Bearer ${userLogged.jwt}` },
-      });
-      setTeachers(response.data);
-    }
-
     searchTeacher();
-  }, [search]);
+  }, [search, teachersPage]);
 
   return (
     <div>
@@ -250,10 +256,13 @@ export default function ResultsPage(props) {
                   {
                     tabButton: "Professores",
                     tabIcon: AccountCircleIcon,
-                    tabContent:
-                      teachers.length !== 0 ? (
-                        <>
-                          <GridContainer justify="center">
+                    tabContent: (
+                      <>
+                        <GridContainer
+                          justify="center"
+                          style={{ marginTop: 20 }}
+                        >
+                          {teachers.length !== 0 ? (
                             <GridItem xs={12} sm={12} md={8}>
                               <GridContainer>
                                 {teachers.map((teacher) => (
@@ -286,42 +295,55 @@ export default function ResultsPage(props) {
                                 ))}
                               </GridContainer>
                             </GridItem>
-                          </GridContainer>
-                          <GridContainer
-                            justify="center"
-                            style={{ marginTop: "20px" }}
-                          >
-                            <Paginations
-                              pages={[
-                                { text: "Anterior" },
-                                { active: true, text: 3 },
-                                { text: "Próxima" },
-                              ]}
-                            />
-                          </GridContainer>
-                        </>
-                      ) : (
+                          ) : (
+                            <GridItem xs={12} sm={12} md={8}>
+                              <h2
+                                style={{
+                                  color: "#3C4858",
+                                  textAlign: "center",
+                                }}
+                              >
+                                Não encontramos nenhum resultado...
+                              </h2>
+                              <div style={{ flex: 1, margin: "0 45%" }}>
+                                <SentimentVeryDissatisfiedIcon
+                                  style={{ fontSize: 80, color: "#3C4858" }}
+                                />
+                              </div>
+                            </GridItem>
+                          )}
+                        </GridContainer>
                         <GridContainer
                           justify="center"
-                          style={{ marginTop: 20 }}
+                          style={{ marginTop: "20px" }}
                         >
-                          <GridItem xs={12} sm={12} md={8}>
-                            <h2
-                              style={{
-                                color: "#3C4858",
-                                textAlign: "center",
-                              }}
-                            >
-                              Não encontramos nenhum resultado...
-                            </h2>
-                            <div style={{ flex: 1, margin: "0 45%" }}>
-                              <SentimentVeryDissatisfiedIcon
-                                style={{ fontSize: 80, color: "#3C4858" }}
-                              />
-                            </div>
-                          </GridItem>
+                          <Paginations
+                            pages={[
+                              {
+                                disabled: teachersPage === 1,
+                                active: teachersPage !== 1,
+                                text: "Anterior",
+                                onClick: () => {
+                                  setTeachersPage(teachersPage - 1);
+                                },
+                              },
+                              {
+                                active: true,
+                                text: teachersPage,
+                              },
+                              {
+                                text: "Próxima",
+                                active: teachers.length !== 0,
+                                disabled: teachers.length === 0,
+                                onClick: () => {
+                                  setTeachersPage(teachersPage + 1);
+                                },
+                              },
+                            ]}
+                          />
                         </GridContainer>
-                      ),
+                      </>
+                    ),
                   },
                 ]}
               />

@@ -18,11 +18,14 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position: "absolute",
     width: 400,
+    maxHeight: 600,
     backgroundColor: theme.palette.background.paper,
     border: "1px solid #fff",
     borderRadius: 4,
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
+    display: "flex",
+    overflow: "scroll",
   },
 }));
 

@@ -26,9 +26,9 @@ export default function HeaderLinks(props) {
     dispatch(signOut(history));
   }
 
-  const navigateHome = (event) => {
+  const navigateCourses = (event) => {
     event.preventDefault();
-    history.push("/home");
+    history.push("/courses");
   };
 
   return (
@@ -37,9 +37,9 @@ export default function HeaderLinks(props) {
         <Button
           color="transparent"
           className={classes.navLink}
-          onClick={navigateHome}
+          onClick={navigateCourses}
           >
-          Home
+          Meus cursos
         </Button>
         <Button
           color="primary"

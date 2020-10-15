@@ -19,6 +19,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import SchoolIcon from "@material-ui/icons/School";
 import GradeIcon from "@material-ui/icons/Grade";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 // core components
 import Header from "components/Header/HeaderLogin.js";
 import Footer from "components/Footer/FooterLogin.js";
@@ -28,6 +29,7 @@ import GridItem from "components/Grid/GridItem.js";
 import HeaderLinks from "components/Header/HeaderLinksUser.js";
 import NavPills from "components/NavPills/NavPills.js";
 import Parallax from "components/Parallax/Parallax.js";
+import CustomModal from "components/Modal/CustomModal.js";
 
 import api from "services/api";
 
@@ -53,23 +55,39 @@ export default function VisitorPage(props) {
 
   const userLogged = useSelector((state) => state.user.profile);
   const [user, setUser] = useState({});
+  const [reviews, setReviews] = useState([]);
+  const [average, setAverage] = useState(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
-  useEffect(() => {
-    async function getUserByNickname() {
-      const response = await api.get(`user/u/${nickname}`, {
-        headers: { Authorization: "Bearer " + userLogged.jwt },
-      });
+  async function getReviewsById(teacherId) {
+    const response = await api.get(`user/review/${teacherId}`, {
+      headers: { Authorization: `Bearer ${userLogged.jwt}` },
+    });
 
-      setUser(response.data);
+    setReviews(response.data.reviews);
+    setAverage(response.data.average);
+  }
 
-      if (
-        nickname === userLogged.nickname ||
-        Object.keys(response.data).length === 0
-      ) {
-        history.push(`/me/${userLogged.nickname}`);
-      }
+  async function getUserByNickname() {
+    const response = await api.get(`user/u/${nickname}`, {
+      headers: { Authorization: "Bearer " + userLogged.jwt },
+    });
+
+    setUser(response.data);
+
+    if (
+      nickname === userLogged.nickname ||
+      Object.keys(response.data).length === 0
+    ) {
+      history.push(`/me/${userLogged.nickname}`);
     }
 
+    if (response.data.register === 1) {
+      getReviewsById(response.data.teacher_id);
+    }
+  }
+
+  useEffect(() => {
     getUserByNickname();
   }, []);
 
@@ -311,115 +329,69 @@ export default function VisitorPage(props) {
                             tabContent: (
                               <GridContainer justify="center">
                                 <GridItem xs={12} sm={12} md={8}>
-                                  <List className={classes.list}>
-                                    <ListItem>
-                                      <ListItemText
-                                        primary="Ótimo professor!"
-                                        secondary="Consegui aprender muito com ele, tudo o que precisava saber..."
-                                      />
-                                      <Box
-                                        component="fieldset"
-                                        mb={3}
-                                        borderColor="transparent"
+                                  {reviews.length !== 0 ? (
+                                    <>
+                                      <List className={classes.list}>
+                                        {reviews.slice(0, 5).map((review) => (
+                                          <>
+                                            <ListItem>
+                                              <ListItemText
+                                                primary={review.comment}
+                                              />
+                                              <Box
+                                                component="fieldset"
+                                                mb={3}
+                                                borderColor="transparent"
+                                              >
+                                                <StyledRating
+                                                  name="customized-color"
+                                                  defaultValue={review.value}
+                                                  getLabelText={(value) =>
+                                                    `${value} Heart${
+                                                      value !== 1 ? "s" : ""
+                                                    }`
+                                                  }
+                                                  precision={0.25}
+                                                  icon={
+                                                    <FavoriteIcon fontSize="inherit" />
+                                                  }
+                                                  readOnly
+                                                />
+                                              </Box>
+                                            </ListItem>
+                                            <Divider component="li" />
+                                          </>
+                                        ))}
+                                      </List>
+                                      <Button
+                                        color="primary"
+                                        className={classes.navLinkLogout}
+                                        style={{ marginTop: 10 }}
+                                        onClick={() => setReviewModalOpen(true)}
                                       >
-                                        <StyledRating
-                                          name="customized-color"
-                                          defaultValue={4.5}
-                                          getLabelText={(value) =>
-                                            `${value} Heart${
-                                              value !== 1 ? "s" : ""
-                                            }`
-                                          }
-                                          precision={0.5}
-                                          icon={
-                                            <FavoriteIcon fontSize="inherit" />
-                                          }
-                                          readOnly
-                                        />
-                                      </Box>
-                                    </ListItem>
-                                    <Divider component="li" />
-                                    <ListItem>
-                                      <ListItemText
-                                        primary="Gostei"
-                                        secondary="Achei muito legal o jeito que ele explica"
-                                      />
-                                      <Box
-                                        component="fieldset"
-                                        mb={3}
-                                        borderColor="transparent"
+                                        Ver todas as avaliações
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <GridItem xs={12} sm={12} md={12}>
+                                      <h2
+                                        style={{
+                                          color: "#3C4858",
+                                          textAlign: "center",
+                                        }}
                                       >
-                                        <StyledRating
-                                          name="customized-color"
-                                          defaultValue={5}
-                                          getLabelText={(value) =>
-                                            `${value} Heart${
-                                              value !== 1 ? "s" : ""
-                                            }`
-                                          }
-                                          precision={0.5}
-                                          icon={
-                                            <FavoriteIcon fontSize="inherit" />
-                                          }
-                                          readOnly
+                                        Não há nenhuma avaliação...
+                                      </h2>
+                                      <div style={{ flex: 1, margin: "0 45%" }}>
+                                        <SentimentVeryDissatisfiedIcon
+                                          style={{
+                                            fontSize: 80,
+                                            color: "#3C4858",
+                                          }}
                                         />
-                                      </Box>
-                                    </ListItem>
-                                    <Divider component="li" />
-                                    <ListItem>
-                                      <ListItemText
-                                        primary="Poderia melhorar"
-                                        secondary="Achei dificil de entender o que ele explicava, a aula presencial pode ser melhor"
-                                      />
-                                      <Box
-                                        component="fieldset"
-                                        mb={3}
-                                        borderColor="transparent"
-                                      >
-                                        <StyledRating
-                                          name="customized-color"
-                                          defaultValue={3}
-                                          getLabelText={(value) =>
-                                            `${value} Heart${
-                                              value !== 1 ? "s" : ""
-                                            }`
-                                          }
-                                          precision={0.5}
-                                          icon={
-                                            <FavoriteIcon fontSize="inherit" />
-                                          }
-                                          readOnly
-                                        />
-                                      </Box>
-                                    </ListItem>
-                                    <Divider component="li" />
-                                    <ListItem>
-                                      <ListItemText
-                                        primary="Já vi melhores"
-                                        secondary="Conteúdo muito básico, ainda fiquei com dúvidas"
-                                      />
-                                      <Box
-                                        component="fieldset"
-                                        mb={3}
-                                        borderColor="transparent"
-                                      >
-                                        <StyledRating
-                                          name="customized-color"
-                                          defaultValue={1.5}
-                                          getLabelText={(value) =>
-                                            `${value} Heart${
-                                              value !== 1 ? "s" : ""
-                                            }`
-                                          }
-                                          precision={0.5}
-                                          icon={
-                                            <FavoriteIcon fontSize="inherit" />
-                                          }
-                                          readOnly
-                                        />
-                                      </Box>
-                                    </ListItem>
-                                  </List>
+                                      </div>
+                                    </GridItem>
+                                  )}
                                 </GridItem>
                               </GridContainer>
                             ),
@@ -432,6 +404,37 @@ export default function VisitorPage(props) {
           </div>
         </div>
       </div>
+      <CustomModal open={reviewModalOpen} setOpen={setReviewModalOpen}>
+        {reviews ? (
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={12}>
+              <h3>Média de avaliações: {average}</h3>
+            </GridItem>
+            <List className={classes.list}>
+              {reviews.map((review) => (
+                <>
+                  <ListItem>
+                    <ListItemText primary={review.comment} />
+                    <Box component="fieldset" mb={3} borderColor="transparent">
+                      <StyledRating
+                        name="customized-color"
+                        defaultValue={review.value}
+                        getLabelText={(value) =>
+                          `${value} Heart${value !== 1 ? "s" : ""}`
+                        }
+                        precision={0.25}
+                        icon={<FavoriteIcon fontSize="inherit" />}
+                        readOnly
+                      />
+                    </Box>
+                  </ListItem>
+                  <Divider component="li" />
+                </>
+              ))}
+            </List>
+          </GridContainer>
+        ) : null}
+      </CustomModal>
       <Footer />
     </div>
   );
