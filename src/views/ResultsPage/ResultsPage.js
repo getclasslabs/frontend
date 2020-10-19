@@ -58,6 +58,7 @@ export default function ResultsPage(props) {
   const [newSearch, setNewSearch] = useState("");
 
   const [teachers, setTeachers] = useState([]);
+  const [teachersHasNext, setTeachersHasNext] = useState(false);
   const [teachersPage, setTeachersPage] = useState(1);
 
   function navigateSearch() {
@@ -72,7 +73,9 @@ export default function ResultsPage(props) {
         headers: { Authorization: `Bearer ${userLogged.jwt}` },
       }
     );
-    setTeachers(response.data);
+
+    setTeachersHasNext(response.data.next ?? false);
+    setTeachers(response.data.results ?? []);
   }
 
   useEffect(() => {
@@ -102,7 +105,11 @@ export default function ResultsPage(props) {
         }}
         {...rest}
       />
-      <Parallax filter image={selectedPicture}>
+      <Parallax
+        filter
+        image={selectedPicture}
+        style={{ paddingLeft: "18%", paddingRight: "18%" }}
+      >
         <div
           className={classes.container}
           style={{
@@ -333,11 +340,13 @@ export default function ResultsPage(props) {
                               },
                               {
                                 text: "Próxima",
-                                active: teachers.length !== 0,
-                                disabled: teachers.length === 0,
-                                onClick: () => {
-                                  setTeachersPage(teachersPage + 1);
-                                },
+                                active: teachersHasNext,
+                                disabled: !teachersHasNext,
+                                onClick: teachersHasNext
+                                  ? () => {
+                                      setTeachersPage(teachersPage + 1);
+                                    }
+                                  : null,
                               },
                             ]}
                           />

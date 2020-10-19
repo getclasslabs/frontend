@@ -35,6 +35,7 @@ export default function CoursesView(props) {
       <Header
         color="white"
         brand="Material Kit React"
+        isView={true}
         rightLinks={<HeaderLinks />}
         {...rest}
       />

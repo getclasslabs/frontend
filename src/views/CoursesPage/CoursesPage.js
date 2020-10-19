@@ -61,7 +61,11 @@ export default function CoursesPage(props) {
         }}
         {...rest}
       />
-      <Parallax filter image={image}>
+      <Parallax
+        filter
+        image={image}
+        style={{ paddingLeft: "18%", paddingRight: "18%" }}
+      >
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={12}>

@@ -58,7 +58,11 @@ export default function LandingPage(props) {
         }}
         {...rest}
       />
-      <Parallax filter image={selectedPicture}>
+      <Parallax
+        filter
+        image={selectedPicture}
+        style={{ paddingLeft: "18%", paddingRight: "18%" }}
+      >
         <div className={classes.container}>
           <GridContainer>
             <GridItem xs={12} sm={12} md={6}>

@@ -61,7 +61,11 @@ export default function HomePage(props) {
         }}
         {...rest}
       />
-      <Parallax filter image={selectedPicture}>
+      <Parallax
+        filter
+        image={selectedPicture}
+        style={{ paddingLeft: "18%", paddingRight: "18%" }}
+      >
         <div
           className={classes.container}
           style={{

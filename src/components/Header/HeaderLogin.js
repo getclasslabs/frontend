@@ -12,8 +12,13 @@ import IconButton from "@material-ui/core/IconButton";
 import Hidden from "@material-ui/core/Hidden";
 import Drawer from "@material-ui/core/Drawer";
 // @material-ui/icons
+import Search from "@material-ui/icons/Search";
 import Menu from "@material-ui/icons/Menu";
 // core components
+import GridContainer from "components/Grid/GridContainer.js";
+import GridItem from "components/Grid/GridItem.js";
+import Button from "components/CustomButtons/Button.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
 import styles from "assets/jss/material-kit-react/components/headerStyle.js";
 
 import logo from "assets/img/logo.png";
@@ -24,9 +29,24 @@ const useStyles = makeStyles(styles);
 export default function Header(props) {
   const classes = useStyles();
   const history = useHistory();
+
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [white, setWhite] = React.useState(true);
+  const [search, setSearch] = React.useState("");
+
+  const navigateSearch = (event) => {
+    event.preventDefault();
+    history.push({
+      pathname: "/results",
+      state: { search: search },
+    });
+  };
+
   React.useEffect(() => {
+    if (props.isView) {
+      setWhite(false);
+    }
+
     if (props.changeColorOnScroll) {
       window.addEventListener("scroll", headerColorChange);
     }
@@ -69,8 +89,15 @@ export default function Header(props) {
   });
   return (
     <AppBar className={appBarClasses}>
-      <Toolbar className={classes.container}>
-        <div className={classes.flex} onClick={() => history.push("/home")}>
+      <Toolbar
+        className={classes.container}
+        style={{
+          marginRight: 15,
+          marginLeft: 15,
+          width: "100%",
+        }}
+      >
+        <div onClick={() => history.push("/home")}>
           <img
             src={white ? logoWhite : logo}
             style={{
@@ -80,6 +107,41 @@ export default function Header(props) {
             }}
           />
         </div>
+
+        {!white ? (
+          <GridContainer
+            alignItems="alignItems"
+            style={{ paddingTop: "10px", width: "50%" }}
+          >
+            <GridItem xs={6} sm={6} md={10}>
+              <CustomInput
+                labelText="Buscar..."
+                id="search"
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
+                formControlProps={{
+                  fullWidth: true,
+                }}
+                style={{
+                  paddingLeft: "10px",
+                }}
+              />
+            </GridItem>
+            <GridItem xs={2} sm={2} md={2}>
+              <Button
+                color="primary"
+                size="lg"
+                rel="noopener noreferrer"
+                onClick={navigateSearch}
+              >
+                <Search />
+              </Button>
+            </GridItem>
+          </GridContainer>
+        ) : null}
+
         <Hidden smDown implementation="css">
           {rightLinks}
         </Hidden>
@@ -134,6 +196,7 @@ Header.propTypes = {
   brand: PropTypes.string,
   fixed: PropTypes.bool,
   absolute: PropTypes.bool,
+  isView: PropTypes.bool,
   // this will cause the sidebar to change the color from
   // props.color (see above) to changeColorOnScroll.color
   // when the window.pageYOffset is heigher or equal to
