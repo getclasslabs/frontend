@@ -53,6 +53,10 @@ export default function VisitorPage(props) {
   const history = useHistory();
   const { nickname } = useParams();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const userLogged = useSelector((state) => state.user.profile);
   const [user, setUser] = useState({});
   const [reviews, setReviews] = useState([]);

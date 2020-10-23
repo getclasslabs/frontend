@@ -22,11 +22,11 @@ export default function ProductSection() {
     <div className={classes.section}>
       <GridContainer justify="center">
         <GridItem xs={12} sm={12} md={8}>
-          <h2 className={classes.title}>Vamos Falar Sobre o Produto</h2>
+          <h2 className={classes.title}>Mas o que é o GetClass?</h2>
           <h5 className={classes.description}>
-            O ... surgiu com a intenção de ajudar aqueles que tem uma enorme
-            vontade de aprender à encontrar alguém com a mesma vontade para
-            ensinar! Nossa intenção é conectar pessoas com intuito de
+            O GetClass surgiu com a intenção de ajudar aqueles que tem uma
+            enorme vontade de aprender à encontrar alguém com a mesma vontade
+            para ensinar! Nossa intenção é conectar pessoas com intuito de
             compartilhar conhecimento sobre qualquer assunto, desde aulas
             acadêmicas até aulas de música, esportes e qualquer coisa que você
             tiver interesse.
@@ -37,8 +37,8 @@ export default function ProductSection() {
         <GridContainer>
           <GridItem xs={12} sm={12} md={4}>
             <InfoArea
-              title="Busque e Agende Aulas"
-              description="Busque pelo assunto desejado e encontre por alguém que esteja disposta a te ensinar sobre ele. Após isso é só agendar um horário!"
+              title="Busque Qualquer Tipo de Aula"
+              description="Busque pelo assunto desejado e encontre por alguém que esteja disposta a te ensinar sobre ele."
               icon={BookmarksIcon}
               iconColor="info"
               vertical
@@ -55,8 +55,8 @@ export default function ProductSection() {
           </GridItem>
           <GridItem xs={12} sm={12} md={4}>
             <InfoArea
-              title="Avalie e Seja Avaliado"
-              description="Avalie o professor ao fim de cada aula, com um breve comentário para que mais pessoas saibam sobre ele, e teste o que foi ensinado com um breve questionário!"
+              title="Avalie e Tire suas Dúvidas"
+              description="Avalie o professor  com um breve comentário para que mais pessoas saibam sobre ele, e elimine suas dúvidas a qualquer momento com o Painel de Comentários!"
               icon={RateReviewIcon}
               iconColor="info"
               vertical

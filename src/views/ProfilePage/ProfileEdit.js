@@ -44,6 +44,10 @@ export default function ProfilePageEdit(props) {
   const history = useHistory();
   const userLogged = useSelector((state) => state.user.profile);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [openError, setOpenError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -180,7 +184,12 @@ export default function ProfilePageEdit(props) {
       <Header
         color="transparent"
         brand="Material Kit React"
-        rightLinks={<HeaderLinks handleSave={handleSave} />}
+        rightLinks={
+          <HeaderLinks
+            handleSave={handleSave}
+            handleCancel={() => history.push(`/me/${userLogged.nickname}`)}
+          />
+        }
         fixed
         changeColorOnScroll={{
           height: 200,
@@ -500,6 +509,10 @@ export default function ProfilePageEdit(props) {
                                   }}
                                   formControlProps={{
                                     fullWidth: true,
+                                  }}
+                                  inputProps={{
+                                    type: "number",
+                                    autoComplete: "off",
                                   }}
                                 />
                               </GridItem>

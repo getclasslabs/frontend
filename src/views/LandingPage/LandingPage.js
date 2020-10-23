@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // @material-ui/core components
@@ -44,6 +44,10 @@ export default function LandingPage(props) {
     history.push("/register");
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <Header
@@ -65,8 +69,10 @@ export default function LandingPage(props) {
       >
         <div className={classes.container}>
           <GridContainer>
-            <GridItem xs={12} sm={12} md={6}>
-              <h1 className={classes.title}>Aqui você aprende mais.</h1>
+            <GridItem xs={12} sm={12} md={8}>
+              <h1 className={classes.title}>
+                Com o GetClass você aprende mais.
+              </h1>
               <h4>
                 Temos inumeros professores e alunos que estão em busca de
                 compartilhar e adquirir conhecimento, junte-se a eles e encontre

@@ -8,7 +8,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 
 export default function CustomCard(props) {
-  const { image, name, maxWidth } = props;
+  const { image, name, maxWidth, description, category, onClick } = props;
   const useStyles = makeStyles({
     root: {
       maxWidth: maxWidth ?? null,
@@ -18,7 +18,7 @@ export default function CustomCard(props) {
   const classes = useStyles();
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} onClick={onClick}>
       <CardActionArea>
         <CardMedia
           component="img"
@@ -31,9 +31,16 @@ export default function CustomCard(props) {
           <Typography gutterBottom variant="h5" component="h2">
             {name}
           </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            component="p"
+            style={{ fontWeight: "bold" }}
+          >
+            {category}
+          </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            Lizards are a widespread group of squamate reptiles, with over 6,000
-            species, ranging across all continents except Antarctica
+            {description}
           </Typography>
         </CardContent>
       </CardActionArea>
@@ -44,5 +51,8 @@ export default function CustomCard(props) {
 CustomCard.propTypes = {
   image: PropTypes.object,
   name: PropTypes.string,
+  category: PropTypes.string,
+  description: PropTypes.string,
+  onClick: PropTypes.func,
   maxWidth: PropTypes.number,
 };

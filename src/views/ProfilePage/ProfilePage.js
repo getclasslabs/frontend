@@ -60,6 +60,10 @@ export default function ProfilePage(props) {
   const userLogged = useSelector((state) => state.user.profile);
   const { nickname } = useParams();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const [user, setUser] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [average, setAverage] = useState(null);

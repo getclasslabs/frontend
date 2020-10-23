@@ -33,8 +33,6 @@ import image2 from "assets/img/background/2.jpg";
 import image4 from "assets/img/background/4.jpg";
 
 import violaoImage from "assets/img/category/violao.jpg";
-import esportesImage from "assets/img/category/esportes.jpg";
-import quimicaImage from "assets/img/category/quimica.jpg";
 
 import api from "services/api";
 
@@ -49,6 +47,10 @@ const useStyles = makeStyles(styles);
 export default function ResultsPage(props) {
   const userLogged = useSelector((state) => state.user.profile);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
@@ -60,6 +62,14 @@ export default function ResultsPage(props) {
   const [teachers, setTeachers] = useState([]);
   const [teachersHasNext, setTeachersHasNext] = useState(false);
   const [teachersPage, setTeachersPage] = useState(1);
+
+  const [course, setCourse] = useState([]);
+  const [courseHasNext, setCourseHasNext] = useState(false);
+  const [coursePage, setCoursePage] = useState(1);
+
+  const [category, setCategory] = useState([]);
+  const [categoryHasNext, setCategoryHasNext] = useState(false);
+  const [categoryPage, setCategoryPage] = useState(1);
 
   function navigateSearch() {
     setTeachersPage(1);
@@ -78,6 +88,30 @@ export default function ResultsPage(props) {
     setTeachers(response.data.results ?? []);
   }
 
+  async function searchCourse() {
+    const response = await api.get(
+      `courses/search?name=${search}&page=${coursePage}`,
+      {
+        headers: { Authorization: `Bearer ${userLogged.jwt}` },
+      }
+    );
+
+    setCourseHasNext(response.data.next ?? false);
+    setCourse(response.data.results ?? []);
+  }
+
+  async function searchCategory() {
+    const response = await api.get(
+      `courses/category/search?name=${search}&page=${categoryPage}`,
+      {
+        headers: { Authorization: `Bearer ${userLogged.jwt}` },
+      }
+    );
+
+    setCategoryHasNext(response.data.next ?? false);
+    setCategory(response.data.results ?? []);
+  }
+
   useEffect(() => {
     if (location.state && location.state.search) {
       setSearch(location.state.search);
@@ -90,6 +124,14 @@ export default function ResultsPage(props) {
   useEffect(() => {
     searchTeacher();
   }, [search, teachersPage]);
+
+  useEffect(() => {
+    searchCourse();
+  }, [search, coursePage]);
+
+  useEffect(() => {
+    searchCategory();
+  }, [search, categoryPage]);
 
   return (
     <div>
@@ -161,39 +203,54 @@ export default function ResultsPage(props) {
                 color="primary"
                 tabs={[
                   {
-                    tabButton: "Categorias",
-                    tabIcon: StyleIcon,
+                    tabButton: "Cursos",
+                    tabIcon: SchoolIcon,
                     tabContent: (
                       <>
                         <GridContainer justify="center">
-                          <GridItem xs={12} sm={12} md={8}>
-                            <GridContainer>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
+                          {course.length !== 0 ? (
+                            <GridItem xs={12} sm={12} md={8}>
+                              <GridContainer>
+                                {course.map((eachCourse) => (
+                                  <GridItem
+                                    key={eachCourse.id}
+                                    cs={12}
+                                    sm={12}
+                                    md={6}
+                                    style={{ marginBottom: "20px" }}
+                                  >
+                                    <Card
+                                      image={violaoImage}
+                                      name={eachCourse.name}
+                                      description={eachCourse.description}
+                                      category={eachCourse.categoryName}
+                                      onClick={() =>
+                                        history.push(
+                                          `/courses/detail/${eachCourse.id}`
+                                        )
+                                      }
+                                    />
+                                  </GridItem>
+                                ))}
+                              </GridContainer>
+                            </GridItem>
+                          ) : (
+                            <GridItem xs={12} sm={12} md={8}>
+                              <h2
+                                style={{
+                                  color: "#3C4858",
+                                  textAlign: "center",
+                                }}
                               >
-                                <Card image={violaoImage} name="Violão" />
-                              </GridItem>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
-                              >
-                                <Card image={esportesImage} name="Esportes" />
-                              </GridItem>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
-                              >
-                                <Card image={quimicaImage} name="Química" />
-                              </GridItem>
-                            </GridContainer>
-                          </GridItem>
+                                Não encontramos nenhum resultado...
+                              </h2>
+                              <div style={{ flex: 1, margin: "0 45%" }}>
+                                <SentimentVeryDissatisfiedIcon
+                                  style={{ fontSize: 80, color: "#3C4858" }}
+                                />
+                              </div>
+                            </GridItem>
+                          )}
                         </GridContainer>
                         <GridContainer
                           justify="center"
@@ -201,9 +258,31 @@ export default function ResultsPage(props) {
                         >
                           <Paginations
                             pages={[
-                              { text: "Anterior" },
-                              { active: true, text: 3 },
-                              { text: "Próxima" },
+                              {
+                                disabled: coursePage === 1,
+                                active: coursePage !== 1,
+                                text: "Anterior",
+                                onClick:
+                                  coursePage > 1
+                                    ? () => {
+                                        setCoursePage(coursePage - 1);
+                                      }
+                                    : null,
+                              },
+                              {
+                                active: true,
+                                text: coursePage,
+                              },
+                              {
+                                text: "Próxima",
+                                active: courseHasNext,
+                                disabled: !courseHasNext,
+                                onClick: courseHasNext
+                                  ? () => {
+                                      setCoursePage(coursePage + 1);
+                                    }
+                                  : null,
+                              },
                             ]}
                           />
                         </GridContainer>
@@ -211,39 +290,54 @@ export default function ResultsPage(props) {
                     ),
                   },
                   {
-                    tabButton: "Cursos",
-                    tabIcon: SchoolIcon,
+                    tabButton: "Categorias",
+                    tabIcon: StyleIcon,
                     tabContent: (
                       <>
                         <GridContainer justify="center">
-                          <GridItem xs={12} sm={12} md={8}>
-                            <GridContainer>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
+                          {category.length !== 0 ? (
+                            <GridItem xs={12} sm={12} md={8}>
+                              <GridContainer>
+                                {category.map((eachCategory) => (
+                                  <GridItem
+                                    key={eachCategory.id}
+                                    cs={12}
+                                    sm={12}
+                                    md={6}
+                                    style={{ marginBottom: "20px" }}
+                                  >
+                                    <Card
+                                      image={violaoImage}
+                                      name={eachCategory.name}
+                                      description={eachCategory.description}
+                                      category={eachCategory.categoryName}
+                                      onClick={() =>
+                                        history.push(
+                                          `/courses/detail/${eachCategory.id}`
+                                        )
+                                      }
+                                    />
+                                  </GridItem>
+                                ))}
+                              </GridContainer>
+                            </GridItem>
+                          ) : (
+                            <GridItem xs={12} sm={12} md={8}>
+                              <h2
+                                style={{
+                                  color: "#3C4858",
+                                  textAlign: "center",
+                                }}
                               >
-                                <Card image={violaoImage} name="Violão" />
-                              </GridItem>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
-                              >
-                                <Card image={esportesImage} name="Esportes" />
-                              </GridItem>
-                              <GridItem
-                                cs={12}
-                                sm={12}
-                                md={6}
-                                style={{ marginBottom: "20px" }}
-                              >
-                                <Card image={quimicaImage} name="Química" />
-                              </GridItem>
-                            </GridContainer>
-                          </GridItem>
+                                Não encontramos nenhum resultado...
+                              </h2>
+                              <div style={{ flex: 1, margin: "0 45%" }}>
+                                <SentimentVeryDissatisfiedIcon
+                                  style={{ fontSize: 80, color: "#3C4858" }}
+                                />
+                              </div>
+                            </GridItem>
+                          )}
                         </GridContainer>
                         <GridContainer
                           justify="center"
@@ -251,9 +345,31 @@ export default function ResultsPage(props) {
                         >
                           <Paginations
                             pages={[
-                              { text: "Anterior" },
-                              { active: true, text: 3 },
-                              { text: "Próxima" },
+                              {
+                                disabled: categoryPage === 1,
+                                active: categoryPage !== 1,
+                                text: "Anterior",
+                                onClick:
+                                  categoryPage > 1
+                                    ? () => {
+                                        setCategoryPage(categoryPage - 1);
+                                      }
+                                    : null,
+                              },
+                              {
+                                active: true,
+                                text: categoryPage,
+                              },
+                              {
+                                text: "Próxima",
+                                active: categoryHasNext,
+                                disabled: !categoryHasNext,
+                                onClick: categoryHasNext
+                                  ? () => {
+                                      setCategoryPage(categoryPage + 1);
+                                    }
+                                  : null,
+                              },
                             ]}
                           />
                         </GridContainer>
@@ -330,9 +446,12 @@ export default function ResultsPage(props) {
                                 disabled: teachersPage === 1,
                                 active: teachersPage !== 1,
                                 text: "Anterior",
-                                onClick: () => {
-                                  setTeachersPage(teachersPage - 1);
-                                },
+                                onClick:
+                                  teachersPage > 1
+                                    ? () => {
+                                        setTeachersPage(teachersPage - 1);
+                                      }
+                                    : null,
                               },
                               {
                                 active: true,

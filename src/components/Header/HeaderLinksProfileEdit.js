@@ -22,7 +22,7 @@ export default function HeaderLinks(props) {
   const classes = useStyles();
   const history = useHistory();
 
-  const { handleSave } = props;
+  const { handleSave, handleCancel } = props;
 
   return (
     <List className={classes.list}>
@@ -36,7 +36,7 @@ export default function HeaderLinks(props) {
         </Button>
         <Button
           color="danger"
-          onClick={(e) => history.push(`/me/${userLogged.nickname}`)}
+          onClick={handleCancel}
           className={classes.navLinkLogout}
         >
           Cancelar

@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 import React from "react";
+import { useHistory } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 
@@ -12,64 +14,11 @@ import GridListTileBar from "@material-ui/core/GridListTileBar";
 
 import styles from "assets/jss/material-kit-react/views/landingPageSections/teamStyle.js";
 
-import image1 from "assets/img/category/matematica.jpg";
-import image2 from "assets/img/category/programacao.jpg";
-import image3 from "assets/img/category/violao.jpg";
-import image4 from "assets/img/category/esportes.jpg";
-import image5 from "assets/img/category/quimica.jpg";
-import image6 from "assets/img/category/foto.jpg";
-import image7 from "assets/img/category/linguagens.jpg";
-import image8 from "assets/img/category/ioga.jpg";
-import image9 from "assets/img/category/danca.jpg";
-import image10 from "assets/img/category/academia.jpg";
-
-const tileData = [
-  {
-    img: image1,
-    title: "Matemática",
-  },
-  {
-    img: image2,
-    title: "Programação",
-  },
-  {
-    img: image3,
-    title: "Violão",
-  },
-  {
-    img: image4,
-    title: "Esportes",
-  },
-  {
-    img: image5,
-    title: "Química",
-  },
-  {
-    img: image6,
-    title: "Fotografia",
-  },
-  {
-    img: image7,
-    title: "Linguagens",
-  },
-  {
-    img: image8,
-    title: "Ioga",
-  },
-  {
-    img: image9,
-    title: "Dança",
-  },
-  {
-    img: image10,
-    title: "Academia",
-  },
-];
-
 const useStyles = makeStyles(styles);
 
-export default function TeamSection() {
+export default function TeamSection({ categories }) {
   const classes = useStyles();
+  const history = useHistory();
 
   const customStyles = () => ({
     root: {
@@ -97,16 +46,27 @@ export default function TeamSection() {
         <GridContainer>
           <div className={classes.root}>
             <GridList cellHeight={180} className={classes.gridList}>
-              {tileData.map((tile) => (
+              {categories.map((category) => (
                 <CustomGridListTile
-                  key={tile.img}
-                  onClick={() => alert(tile.title)}
+                  key={category.id}
+                  onClick={() =>
+                    history.push({
+                      pathname: "/results",
+                      state: { search: category.name },
+                    })
+                  }
                   style={{
                     padding: "10px",
                   }}
                 >
-                  <img className="image-grid" src={tile.img} alt={tile.title} />
-                  <GridListTileBar title={tile.title} />
+                  <img
+                    className="image-grid"
+                    src={`http://localhost:3000/category/images/${
+                      category.image ? category.image : "default.jpg"
+                    }`}
+                    alt={category.name}
+                  />
+                  <GridListTileBar title={category.name} />
                 </CustomGridListTile>
               ))}
             </GridList>

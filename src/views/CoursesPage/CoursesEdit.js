@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 // nodejs library that concatenates classes
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -32,10 +32,12 @@ import image1 from "assets/img/background/1.jpg";
 
 const useStyles = makeStyles(styles);
 
-export default function CoursesNew(props) {
+export default function CoursesEdit(props) {
   const classes = useStyles();
   const history = useHistory();
   const { ...rest } = props;
+  const { course_id } = useParams();
+
   const userLogged = useSelector((state) => state.user.profile);
 
   useEffect(() => {
@@ -46,19 +48,19 @@ export default function CoursesNew(props) {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [classType, setClassType] = useState("ONLINE");
-  const [name, setName] = useState();
-  const [description, setDescription] = useState();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   const [categoryID, setCategoryID] = useState(0);
   const [categories, setCategories] = useState(null);
 
-  const [maxStudents, setMaxStudents] = useState();
-  const [periods, setPeriods] = useState();
-  const [place, setPlace] = useState();
-  const [price, setPrice] = useState();
-  const [payment, setPayment] = useState();
-  const [classesTotal, setClassesTotal] = useState();
-  const [startDay, setStartDay] = useState();
+  const [maxStudents, setMaxStudents] = useState("");
+  const [periods, setPeriods] = useState("");
+  const [place, setPlace] = useState("");
+  const [price, setPrice] = useState("");
+  const [payment, setPayment] = useState("");
+  const [classesTotal, setClassesTotal] = useState("");
+  const [startDay, setStartDay] = useState("");
   const [allowStudentsAfterStart, setAllowStudentsAfterStart] = useState("sim");
 
   const handleClassType = (event) => {
@@ -113,17 +115,32 @@ export default function CoursesNew(props) {
         setErrorMessage("Preencha todos os campos obrigatórios");
         setOpenError(true);
       } else {
-        const response = await api.post("courses/create", formData, {
+        await api.put(`courses/edit/${course_id}`, formData, {
           headers: { Authorization: "Bearer " + userLogged.jwt },
         });
 
-        history.push(`/courses/detail/${response.data.id}`);
+        history.push(`/courses/detail/${course_id}`, { submitSuccess: true });
       }
     } catch (err) {
       setErrorMessage("Tente novamente");
       setOpenError(true);
     }
   };
+
+  function setCourse(course) {
+    setClassType(course.type);
+    setName(course.name);
+    setDescription(course.description);
+    setCategoryID(course.categoryID);
+    setMaxStudents(course.maxStudents);
+    setPeriods(course.periods);
+    setPlace(course.place);
+    setPrice(course.price);
+    setPayment(course.payment);
+    setClassesTotal(course.classes);
+    setStartDay(course.startDay);
+    setAllowStudentsAfterStart(course.allowStudentsAfterStart ? "sim" : "não");
+  }
 
   useEffect(() => {
     async function getCategoriesReq() {
@@ -134,9 +151,24 @@ export default function CoursesNew(props) {
       setCategories(response.data);
     }
 
+    async function getCourse() {
+      const response = await api.get(`courses/${course_id}`, {
+        headers: { Authorization: "Bearer " + userLogged.jwt },
+      });
+
+      if (userLogged.teacher_id !== response.data.teacher_id) {
+        history.push("/home");
+      }
+
+      setCourse(response.data);
+    }
+
+    getCourse();
+
     if (userLogged.register !== 1) {
       history.push("/home");
     }
+
     getCategoriesReq();
   }, []);
 
@@ -148,7 +180,7 @@ export default function CoursesNew(props) {
         rightLinks={
           <HeaderLinks
             handleSave={handleSave}
-            handleCancel={() => history.push("/courses")}
+            handleCancel={() => history.push(`/courses/detail/${course_id}`)}
           />
         }
         fixed
@@ -422,11 +454,13 @@ export default function CoursesNew(props) {
                 lg={6}
                 style={{ marginBottom: "20px" }}
               >
-                <CategoriesDropdown
-                  setCategoryID={setCategoryID}
-                  categoryID={categoryID}
-                  categories={categories}
-                />
+                {categories ? (
+                  <CategoriesDropdown
+                    setCategoryID={setCategoryID}
+                    categoryID={categoryID}
+                    categories={categories}
+                  />
+                ) : null}
               </GridItem>
               <GridItem xs={12} sm={12} md={12} lg={12}>
                 <CustomInput

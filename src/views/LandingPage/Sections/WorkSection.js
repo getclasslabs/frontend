@@ -12,8 +12,6 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
-import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-kit-react/views/landingPageSections/workStyle.js";
 
@@ -33,13 +31,14 @@ export default function WorkSection() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <Typography className={classes.heading}>Dúvida 1</Typography>
+                <Typography className={classes.heading}>
+                  As aulas são gratuitas?
+                </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
+                  O preço de cada curso é escolhido pelo próprio Professor,
+                  podendo então ser gratuito ou não.
                 </Typography>
               </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -49,13 +48,15 @@ export default function WorkSection() {
                 aria-controls="panel2a-content"
                 id="panel2a-header"
               >
-                <Typography className={classes.heading}>Dúvida 2</Typography>
+                <Typography className={classes.heading}>
+                  Fiquei com dúvidas, como entro em contato com o Professor?
+                </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
+                  Na página do curso há um Mural de Comentários onde os alunos e
+                  Professor podem se comunicar, respondendo dúvidas, comunicando
+                  imprevistos, marcando aulas extras e o que mais precisar!
                 </Typography>
               </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -65,13 +66,15 @@ export default function WorkSection() {
                 aria-controls="panel2a-content"
                 id="panel2a-header"
               >
-                <Typography className={classes.heading}>Dúvida 3</Typography>
+                <Typography className={classes.heading}>
+                  Os cursos são para turmas ou para um único aluno?
+                </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
+                  O tipo de curso é escolhido pelo professor, tendo a
+                  possibilidade de permitir quantos alunos ele quiser de se
+                  matricular.
                 </Typography>
               </ExpansionPanelDetails>
             </ExpansionPanel>
@@ -81,64 +84,21 @@ export default function WorkSection() {
                 aria-controls="panel2a-content"
                 id="panel2a-header"
               >
-                <Typography className={classes.heading}>Dúvida 4</Typography>
+                <Typography className={classes.heading}>
+                  Como faço para começar um curso?
+                </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
+                  Após encontrar o curso desejado, seja através da busca ou de
+                  qualquer outra forma, é necessário fazer uma solicitação para
+                  participar do curso e caso ele seja pago é necessário enviar
+                  um comprovante de depósito. Após isso é só esperar o Professor
+                  aprovar sua participação e você conseguirá acessar o Curso!
                 </Typography>
               </ExpansionPanelDetails>
             </ExpansionPanel>
           </div>
-        </GridItem>
-
-        <GridItem cs={12} sm={12} md={8}>
-          <h2 className={classes.title}>Tem mais alguma dúvida?</h2>
-          <h4 className={classes.description}>
-            Conte-nos suas experiência, dicas, sugestões, críticas ou tire suas
-            dúvidas! Fique à vontade sempre que precisar falar conosco, nossa
-            intenção é trazer a melhor experiência possível para você e te fazer
-            chegar ao seu objetivo da forma mais clara.
-          </h4>
-          <form>
-            <GridContainer>
-              <GridItem xs={12} sm={12} md={6}>
-                <CustomInput
-                  labelText="Seu Nome"
-                  id="name"
-                  formControlProps={{
-                    fullWidth: true,
-                  }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={12} md={6}>
-                <CustomInput
-                  labelText="Seu E-mail"
-                  id="email"
-                  formControlProps={{
-                    fullWidth: true,
-                  }}
-                />
-              </GridItem>
-              <CustomInput
-                labelText="Digite aqui sua menssagem"
-                id="message"
-                formControlProps={{
-                  fullWidth: true,
-                  className: classes.textArea,
-                }}
-                inputProps={{
-                  multiline: true,
-                  rows: 5,
-                }}
-              />
-              <GridItem xs={12} sm={12} md={4}>
-                <Button color="primary">Enviar</Button>
-              </GridItem>
-            </GridContainer>
-          </form>
         </GridItem>
       </GridContainer>
     </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -15,12 +16,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CategoriesDropdown() {
+export default function CategoriesDropdown({
+  categoryID,
+  setCategoryID,
+  categories,
+}) {
   const classes = useStyles();
-  const [age, setAge] = React.useState("");
+  const [category, setCategory] = React.useState(categoryID);
 
   const handleChange = (event) => {
-    setAge(event.target.value);
+    setCategory(event.target.value);
+    setCategoryID(event.target.value);
   };
 
   return (
@@ -30,12 +36,18 @@ export default function CategoriesDropdown() {
         <Select
           labelId="category"
           id="demo-simple-select-filled"
-          value={age}
+          value={category}
           onChange={handleChange}
         >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          {categories !== null ? (
+            categories.map((eachCat) => (
+              <MenuItem key={eachCat.id} value={eachCat.id}>
+                {eachCat.name}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem value={0}>Sem Categorias...</MenuItem>
+          )}
         </Select>
       </FormControl>
     </div>

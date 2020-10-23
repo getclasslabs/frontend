@@ -1,5 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // nodejs library to set properties for components
@@ -29,6 +30,7 @@ const useStyles = makeStyles(styles);
 export default function Header(props) {
   const classes = useStyles();
   const history = useHistory();
+  const user = useSelector((state) => state.user.profile);
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [white, setWhite] = React.useState(true);
@@ -108,7 +110,7 @@ export default function Header(props) {
           />
         </div>
 
-        {!white ? (
+        {!white && user ? (
           <GridContainer
             alignItems="alignItems"
             style={{ paddingTop: "10px", width: "50%" }}

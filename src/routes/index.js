@@ -10,6 +10,7 @@ import ResultsPage from "views/ResultsPage/ResultsPage.js";
 import CoursesPage from "views/CoursesPage/CoursesPage.js";
 import CoursesDetail from "views/CoursesPage/CoursesDetail.js";
 import CoursesNew from "views/CoursesPage/CoursesNew.js";
+import CoursesEdit from "views/CoursesPage/CoursesEdit.js";
 import CoursesView from "views/CoursesPage/CoursesView.js";
 
 import ProfilePage from "views/ProfilePage/ProfilePage.js";
@@ -38,6 +39,11 @@ export default function Routes() {
         path="/courses/detail/:course_id"
         isPrivate
         component={CoursesDetail}
+      />
+      <Route
+        path="/courses/edit/:course_id"
+        isPrivate
+        component={CoursesEdit}
       />
       <Route path="/courses/new" isPrivate exact component={CoursesNew} />
       <Route path="/courses/view" isPrivate exact component={CoursesView} />

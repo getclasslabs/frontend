@@ -41,26 +41,7 @@ export default function Footer(props) {
     <footer className={footerClasses}>
       <div className={classes.container}>
         <div className={classes.left}>
-          <List className={classes.list}>
-            <ListItem className={classes.inlineBlock}>
-              <a
-                href="#"
-                className={classes.block}
-                onClick={navigateLogin}
-              >
-                Entrar
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a
-                href="#"
-                className={classes.block}
-                onClick={navigateRegister}
-              >
-                Registrar
-              </a>
-            </ListItem>
-          </List>
+          
         </div>
       </div>
     </footer>

@@ -30,6 +30,10 @@ export default function CoursesView(props) {
     setClassId(location.state.id); // result: 'some_value'
   }, [location]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <Header
