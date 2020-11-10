@@ -29,10 +29,10 @@ export default function HeaderLinks(props) {
 
   return (
     <List className={classes.list}>
-      {location.pathname === "/courses" ?
+      {location.pathname === "/courses" && props.isTeacher ?
         (<ListItem className={classes.listItem}>
           <Button
-            className={classes.navLink}
+            className={classes.navLinkLogout}
             onClick={(e) => history.push("/courses/new")}
             color="primary"
           >

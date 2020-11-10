@@ -20,19 +20,18 @@ import Parallax from "components/Parallax/Parallax.js";
 import CardTeacher from "components/CustomCard/CardTeacher.js";
 import Button from "components/CustomButtons/Button.js";
 import CustomModal from "components/Modal/CustomModal.js";
+import CustomModalReceipt from "components/Modal/CustomModalReceipt.js";
 
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 
 import api from "services/api";
-
-import image1 from "assets/img/background/1.jpg";
 
 import Chat from "./Components/Chat.js";
 import Students from "./Components/Students.js";
 
 const useStyles = makeStyles(styles);
 
-export default function TeacherDetail({ props }) {
+export default function TeacherDetail({ props, data }) {
   const classes = useStyles();
   const history = useHistory();
   const { ...rest } = props;
@@ -46,7 +45,10 @@ export default function TeacherDetail({ props }) {
   const [teacher, setTeacher] = useState([]);
   const [course, setCourse] = useState([]);
   const [admin, setAdmin] = useState(false);
+
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalReceiptOpen, setModalReceiptOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(false);
 
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -71,28 +73,21 @@ export default function TeacherDetail({ props }) {
   }, [props]);
 
   async function getCourse() {
-    const response = await api.get(`courses/${course_id}`, {
-      headers: { Authorization: "Bearer " + userLogged.jwt },
-    });
-
-    if (
-      userLogged.teacher_id === response.data.teacher_id &&
-      response.data.active
-    ) {
+    if (userLogged.teacher_id === data.teacher_id && data.active) {
       setAdmin(true);
     }
 
-    if (!response.data) {
+    if (!data) {
       history.push("/courses");
     }
 
-    const responseTeacher = await api.get(`user/u/${userLogged.nickname}`, {
+    const responseTeacher = await api.get(`user/teacher/${data.teacher_id}`, {
       headers: { Authorization: `Bearer ${userLogged.jwt}` },
     });
 
     setTeacher(responseTeacher.data);
 
-    setCourse(response.data);
+    setCourse(data);
   }
 
   useEffect(() => {
@@ -137,7 +132,13 @@ export default function TeacherDetail({ props }) {
         }}
         {...rest}
       />
-      <Parallax small filter image={image1} />
+      <Parallax
+        small
+        filter
+        image={`http://localhost:3000/course/images/${
+          course.image ? course.image : "default.png"
+        }`}
+      />
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container} style={{ paddingBottom: 30 }}>
           <GridContainer>
@@ -204,7 +205,11 @@ export default function TeacherDetail({ props }) {
                 onClick={() =>
                   history.push({
                     pathname: "/courses/view",
-                    state: { id: course_id },
+                    state: {
+                      id: course_id,
+                      name: course.name,
+                      periods: course.periods,
+                    },
                   })
                 }
               >
@@ -215,7 +220,12 @@ export default function TeacherDetail({ props }) {
               <Chat isLong />
             </GridItem>
             <GridItem cs={12} sm={12} md={6}>
-              <Students />
+              <Students
+                id={course_id}
+                setModalContent={setModalContent}
+                setModalOpen={setModalOpen}
+                setModalReciptOpen={setModalReceiptOpen}
+              />
             </GridItem>
             <CustomModal
               open={modalOpen}
@@ -257,6 +267,12 @@ export default function TeacherDetail({ props }) {
           {message}
         </Alert>
       </Snackbar>
+      <CustomModalReceipt open={modalReceiptOpen} setOpen={setModalReceiptOpen}>
+        {modalContent}
+      </CustomModalReceipt>
+      <CustomModal open={modalOpen} setOpen={setModalOpen}>
+        {modalContent}
+      </CustomModal>
       <Footer />
     </div>
   );

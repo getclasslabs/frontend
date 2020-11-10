@@ -10143,6 +10143,11 @@ react-app-rewired@^2.1.6:
   dependencies:
     semver "^5.6.0"
 
+react-awesome-lightbox@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/react-awesome-lightbox/-/react-awesome-lightbox-1.7.3.tgz#ee1c00fd4197e0e65bf996aa219eac4d8b6db5a0"
+  integrity sha512-mSxdL3KGzuh2eR8I00nv9njiolmMoXITuCvfd71DBXK13JW3e+Z/sCMENS9+dngBJU8/m7dR1Ix0W6afS5cFsA==
+
 react-datetime@2.16.3:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/react-datetime/-/react-datetime-2.16.3.tgz#7f9ac7d4014a939c11c761d0c22d1fb506cb505e"
@@ -10233,6 +10238,11 @@ react-jutsu@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-jutsu/-/react-jutsu-2.2.0.tgz#d09108329910653dd0410ee3ad6d13420ef1a6af"
   integrity sha512-iDL7wSKgRRdAIYO/mO+HJUxONzLrhyLYLJLHAQUu94MXrKciB/mS6O8oN3yZeYGMgVWWUpb89nlOxi24D/yKnQ==
+
+react-loading@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-loading/-/react-loading-2.0.3.tgz#e8138fb0c3e4674e481b320802ac7048ae14ffb9"
+  integrity sha512-Vdqy79zq+bpeWJqC+xjltUjuGApyoItPgL0vgVfcJHhqwU7bAMKzysfGW/ADu6i0z0JiOCRJjo+IkFNkRNbA3A==
 
 react-onclickoutside@^6.5.0:
   version "6.9.0"

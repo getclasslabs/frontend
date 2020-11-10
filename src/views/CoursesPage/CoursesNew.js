@@ -22,7 +22,8 @@ import HeaderLinks from "components/Header/HeaderLinksProfileEdit.js";
 import Parallax from "components/Parallax/Parallax.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import CategoriesDropdown from "components/CustomDropdown/CategoriesDropdown.js";
-import ImageUploader from "components/Upload/Image";
+import CustomModal from "components/Modal/CreateCourseModal.js";
+import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
 
@@ -61,6 +62,9 @@ export default function CoursesNew(props) {
   const [startDay, setStartDay] = useState();
   const [allowStudentsAfterStart, setAllowStudentsAfterStart] = useState("sim");
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [createdId, setCreatedId] = useState(null);
+
   const handleClassType = (event) => {
     setClassType(event.target.value);
   };
@@ -81,7 +85,8 @@ export default function CoursesNew(props) {
     setOpenError(false);
   };
 
-  const handleSave = async () => {
+  async function handleSave(e) {
+    e.preventDefault();
     var unixTimestamp = new Date(startDay).getTime() / 1000;
 
     const formData = {
@@ -117,13 +122,14 @@ export default function CoursesNew(props) {
           headers: { Authorization: "Bearer " + userLogged.jwt },
         });
 
-        history.push(`/courses/detail/${response.data.id}`);
+        setModalOpen(true);
+        setCreatedId(response.data.id);
       }
     } catch (err) {
       setErrorMessage("Tente novamente");
       setOpenError(true);
     }
-  };
+  }
 
   useEffect(() => {
     async function getCategoriesReq() {
@@ -173,127 +179,46 @@ export default function CoursesNew(props) {
             </GridContainer>
           </div>
           <div className={classes.container}>
-            <GridContainer>
-              <GridItem xs={12} sm={12} md={12} lg={12}>
-                <CustomInput
-                  labelText="Nome do Curso"
-                  id="name"
-                  value={name}
-                  onChange={(event) => {
-                    setName(event.target.value);
-                  }}
-                  formControlProps={{
-                    fullWidth: true,
-                  }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={12} md={12} lg={12}>
-                <CustomInput
-                  labelText="Faça uma descrição sobre o curso..."
-                  id="description"
-                  formControlProps={{
-                    fullWidth: true,
-                    className: classes.textArea,
-                  }}
-                  value={description}
-                  onChange={(event) => {
-                    setDescription(event.target.value);
-                  }}
-                  inputProps={{
-                    multiline: true,
-                    rows: 5,
-                  }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={12} md={12} lg={12}>
-                <CustomInput
-                  labelText="Horários para as aulas."
-                  id="hour"
-                  value={periods}
-                  onChange={(event) => {
-                    setPeriods(event.target.value);
-                  }}
-                  formControlProps={{
-                    fullWidth: true,
-                    className: classes.textArea,
-                  }}
-                  inputProps={{
-                    multiline: true,
-                    rows: 5,
-                  }}
-                />
-              </GridItem>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={6}
-                lg={6}
-                style={{ marginBottom: "20px" }}
-              >
-                <CustomInput
-                  labelText="Limite de Alunos"
-                  id="maxStudents"
-                  value={maxStudents}
-                  onChange={(event) => {
-                    setMaxStudents(event.target.value);
-                  }}
-                  formControlProps={{
-                    fullWidth: true,
-                  }}
-                  inputProps={{
-                    type: "number",
-                    autoComplete: "off",
-                  }}
-                />
-              </GridItem>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={6}
-                lg={6}
-                style={{ marginBottom: "20px" }}
-              >
-                <FormGroup>
-                  <FormLabel
-                    component="legend"
-                    style={{ paddingTop: "15px", fontSize: "14px" }}
-                  >
-                    Tipo de Aula
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    aria-label="classType"
-                    name="classType"
-                    value={classType}
-                    onChange={handleClassType}
-                    style={{
-                      paddingLeft: "20px",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <FormControlLabel
-                      value="PRESENCIAL"
-                      control={<Radio color="primary" />}
-                      label="Presencial"
-                      style={{ fontSize: "14px" }}
-                    />
-                    <FormControlLabel
-                      value="ONLINE"
-                      control={<Radio color="primary" />}
-                      label="Online"
-                      style={{ fontSize: "14px" }}
-                    />
-                  </RadioGroup>
-                </FormGroup>
-              </GridItem>
-              {classType === "PRESENCIAL" ? (
+            <form onSubmit={handleSave} style={{ width: "100%" }}>
+              <GridContainer>
                 <GridItem xs={12} sm={12} md={12} lg={12}>
                   <CustomInput
-                    labelText="Onde será o local de encontro?"
-                    id="local"
-                    value={place}
+                    labelText="Nome do Curso"
+                    id="name"
+                    value={name}
                     onChange={(event) => {
-                      setPlace(event.target.value);
+                      setName(event.target.value);
+                    }}
+                    formControlProps={{
+                      fullWidth: true,
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={12} lg={12}>
+                  <CustomInput
+                    labelText="Faça uma descrição sobre o curso..."
+                    id="description"
+                    formControlProps={{
+                      fullWidth: true,
+                      className: classes.textArea,
+                    }}
+                    value={description}
+                    onChange={(event) => {
+                      setDescription(event.target.value);
+                    }}
+                    inputProps={{
+                      multiline: true,
+                      rows: 5,
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={12} lg={12}>
+                  <CustomInput
+                    labelText="Horários para as aulas."
+                    id="hour"
+                    value={periods}
+                    onChange={(event) => {
+                      setPeriods(event.target.value);
                     }}
                     formControlProps={{
                       fullWidth: true,
@@ -305,160 +230,261 @@ export default function CoursesNew(props) {
                     }}
                   />
                 </GridItem>
-              ) : null}
-              <GridItem
-                xs={12}
-                sm={12}
-                md={4}
-                lg={4}
-                style={{ marginBottom: "20px" }}
-              >
-                <CustomInput
-                  labelText="Número de Aulas (opcional)"
-                  id="classes"
-                  value={classesTotal}
-                  onChange={(event) => {
-                    setClassesTotal(event.target.value);
-                  }}
-                  formControlProps={{
-                    fullWidth: true,
-                  }}
-                  inputProps={{
-                    type: "number",
-                    autoComplete: "off",
-                  }}
-                />
-              </GridItem>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={4}
-                lg={4}
-                style={{ marginBottom: "20px" }}
-              >
-                <TextField
-                  id="date"
-                  label="Data de Início"
-                  type="date"
-                  value={startDay}
-                  onChange={(event) => {
-                    setStartDay(event.target.value);
-                  }}
-                  className={classes.textField}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  style={{ width: "100%", paddingTop: "10px" }}
-                />
-              </GridItem>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={4}
-                lg={4}
-                style={{ marginBottom: "20px" }}
-              >
-                <FormGroup>
-                  <FormLabel
-                    component="legend"
-                    style={{ paddingTop: "15px", fontSize: "14px" }}
-                  >
-                    Permitir novos alunos após início das Aulas?
-                  </FormLabel>
-                  <RadioGroup
-                    row
-                    aria-label="classType"
-                    name="classType"
-                    value={allowStudentsAfterStart}
-                    onChange={handleAfterClassStart}
-                    style={{
-                      paddingLeft: "20px",
-                      justifyContent: "center",
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={6}
+                  lg={6}
+                  style={{ marginBottom: "20px" }}
+                >
+                  <CustomInput
+                    labelText="Limite de Alunos"
+                    id="maxStudents"
+                    value={maxStudents}
+                    onChange={(event) => {
+                      setMaxStudents(event.target.value);
                     }}
+                    formControlProps={{
+                      fullWidth: true,
+                    }}
+                    inputProps={{
+                      type: "number",
+                      autoComplete: "off",
+                    }}
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={6}
+                  lg={6}
+                  style={{ marginBottom: "20px" }}
+                >
+                  <FormGroup>
+                    <FormLabel
+                      component="legend"
+                      style={{ paddingTop: "15px", fontSize: "14px" }}
+                    >
+                      Tipo de Aula
+                    </FormLabel>
+                    <RadioGroup
+                      row
+                      aria-label="classType"
+                      name="classType"
+                      value={classType}
+                      onChange={handleClassType}
+                      style={{
+                        paddingLeft: "20px",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <FormControlLabel
+                        value="PRESENCIAL"
+                        control={<Radio color="primary" />}
+                        label="Presencial"
+                        style={{ fontSize: "14px" }}
+                      />
+                      <FormControlLabel
+                        value="ONLINE"
+                        control={<Radio color="primary" />}
+                        label="Online"
+                        style={{ fontSize: "14px" }}
+                      />
+                    </RadioGroup>
+                  </FormGroup>
+                </GridItem>
+                {classType === "PRESENCIAL" ? (
+                  <GridItem xs={12} sm={12} md={12} lg={12}>
+                    <CustomInput
+                      labelText="Onde será o local de encontro?"
+                      id="local"
+                      value={place}
+                      onChange={(event) => {
+                        setPlace(event.target.value);
+                      }}
+                      formControlProps={{
+                        fullWidth: true,
+                        className: classes.textArea,
+                      }}
+                      inputProps={{
+                        multiline: true,
+                        rows: 5,
+                      }}
+                    />
+                  </GridItem>
+                ) : null}
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={4}
+                  lg={4}
+                  style={{ marginBottom: "20px" }}
+                >
+                  <CustomInput
+                    labelText="Número de Aulas (opcional)"
+                    id="classes"
+                    value={classesTotal}
+                    onChange={(event) => {
+                      setClassesTotal(event.target.value);
+                    }}
+                    formControlProps={{
+                      fullWidth: true,
+                    }}
+                    inputProps={{
+                      type: "number",
+                      autoComplete: "off",
+                    }}
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={4}
+                  lg={4}
+                  style={{ marginBottom: "20px" }}
+                >
+                  <TextField
+                    id="date"
+                    label="Data de Início"
+                    type="date"
+                    value={startDay}
+                    onChange={(event) => {
+                      setStartDay(event.target.value);
+                    }}
+                    className={classes.textField}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    style={{ width: "100%", paddingTop: "10px" }}
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={4}
+                  lg={4}
+                  style={{ marginBottom: "20px" }}
+                >
+                  <FormGroup>
+                    <FormLabel
+                      component="legend"
+                      style={{ paddingTop: "15px", fontSize: "14px" }}
+                    >
+                      Permitir novos alunos após início das Aulas?
+                    </FormLabel>
+                    <RadioGroup
+                      row
+                      aria-label="classType"
+                      name="classType"
+                      value={allowStudentsAfterStart}
+                      onChange={handleAfterClassStart}
+                      style={{
+                        paddingLeft: "20px",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <FormControlLabel
+                        value={"sim"}
+                        control={<Radio color="primary" />}
+                        label="Sim"
+                        style={{ fontSize: "14px" }}
+                      />
+                      <FormControlLabel
+                        value={"não"}
+                        control={<Radio color="primary" />}
+                        label="Não"
+                        style={{ fontSize: "14px" }}
+                      />
+                    </RadioGroup>
+                  </FormGroup>
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={6}
+                  lg={6}
+                  style={{ marginBottom: "20px" }}
+                >
+                  <CustomInput
+                    labelText="Valor (10.99)"
+                    id="value"
+                    value={price}
+                    onChange={(event) => {
+                      setPrice(event.target.value);
+                    }}
+                    formControlProps={{
+                      fullWidth: true,
+                    }}
+                    inputProps={{
+                      type: "number",
+                      step: ".01",
+                      autoComplete: "off",
+                    }}
+                  />
+                </GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={6}
+                  lg={6}
+                  style={{ marginBottom: "20px" }}
+                >
+                  <CategoriesDropdown
+                    setCategoryID={setCategoryID}
+                    categoryID={categoryID}
+                    categories={categories}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={12} lg={12}>
+                  <CustomInput
+                    labelText="Forma de pagamento (informe como deve ser feito o pagamento, dados bancários, etc...)"
+                    id="payment"
+                    value={payment}
+                    onChange={(event) => {
+                      setPayment(event.target.value);
+                    }}
+                    formControlProps={{
+                      fullWidth: true,
+                      className: classes.textArea,
+                    }}
+                    inputProps={{
+                      multiline: true,
+                      rows: 5,
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={8} lg={8}></GridItem>
+                <GridItem
+                  xs={12}
+                  sm={12}
+                  md={4}
+                  lg={4}
+                  style={{ marginTop: 50, marginBottom: 50 }}
+                >
+                  <Button
+                    color="primary"
+                    onClick={handleSave}
+                    className={classes.navLinkLogout}
+                    type="submit"
                   >
-                    <FormControlLabel
-                      value={"sim"}
-                      control={<Radio color="primary" />}
-                      label="Sim"
-                      style={{ fontSize: "14px" }}
-                    />
-                    <FormControlLabel
-                      value={"não"}
-                      control={<Radio color="primary" />}
-                      label="Não"
-                      style={{ fontSize: "14px" }}
-                    />
-                  </RadioGroup>
-                </FormGroup>
-              </GridItem>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={6}
-                lg={6}
-                style={{ marginBottom: "20px" }}
-              >
-                <CustomInput
-                  labelText="Valor (10.99)"
-                  id="value"
-                  value={price}
-                  onChange={(event) => {
-                    setPrice(event.target.value);
-                  }}
-                  formControlProps={{
-                    fullWidth: true,
-                  }}
-                  inputProps={{
-                    type: "number",
-                    step: ".01",
-                    autoComplete: "off",
-                  }}
-                />
-              </GridItem>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={6}
-                lg={6}
-                style={{ marginBottom: "20px" }}
-              >
-                <CategoriesDropdown
-                  setCategoryID={setCategoryID}
-                  categoryID={categoryID}
-                  categories={categories}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={12} md={12} lg={12}>
-                <CustomInput
-                  labelText="Forma de pagamento (informe como deve ser feito o pagamento, dados bancários, etc...)"
-                  id="payment"
-                  value={payment}
-                  onChange={(event) => {
-                    setPayment(event.target.value);
-                  }}
-                  formControlProps={{
-                    fullWidth: true,
-                    className: classes.textArea,
-                  }}
-                  inputProps={{
-                    multiline: true,
-                    rows: 5,
-                  }}
-                />
-              </GridItem>
-              <GridItem
-                xs={12}
-                sm={12}
-                md={12}
-                lg={12}
-                style={{ marginTop: 10, marginBottom: 30 }}
-              >
-                <ImageUploader image={null} />
-              </GridItem>
-            </GridContainer>
+                    Salvar
+                  </Button>
+                  <Button
+                    color="danger"
+                    onClick={() => history.push(`/courses`)}
+                    className={classes.navLinkLogout}
+                  >
+                    Cancelar
+                  </Button>
+                </GridItem>
+              </GridContainer>
+            </form>
           </div>
         </div>
       </div>
+
+      <CustomModal open={modalOpen} id={createdId} />
+
       <Snackbar
         open={openError}
         autoHideDuration={3000}

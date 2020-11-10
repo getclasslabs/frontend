@@ -41,6 +41,15 @@ export default function HomePage(props) {
   const { ...rest } = props;
 
   const [categories, setCategories] = useState([]);
+  const [courses, setCourses] = useState([]);
+
+  async function getCourses() {
+    const response = await api.get("courses/mine", {
+      headers: { Authorization: "Bearer " + userLogged.jwt },
+    });
+
+    setCourses(response.data);
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,6 +62,7 @@ export default function HomePage(props) {
       setCategories(response.data);
     }
     getCategoriesReq();
+    getCourses();
   }, []);
 
   const [search, setSearch] = useState("");
@@ -98,41 +108,43 @@ export default function HomePage(props) {
               </h1>
             </GridItem>
           </GridContainer>
-          <GridContainer alignItems="alignItems">
-            <GridItem xs={12} sm={12} md={9}>
-              <CustomInput
-                labelText="Digite algo que deseje buscar"
-                id="search"
-                white
-                value={search}
-                onChange={(event) => {
-                  setSearch(event.target.value);
-                }}
-                formControlProps={{
-                  fullWidth: true,
-                }}
-                style={{
-                  paddingLeft: "10px",
-                }}
-              />
-            </GridItem>
-            <GridItem xs={12} sm={12} md={2}>
-              <Button
-                color="primary"
-                size="lg"
-                rel="noopener noreferrer"
-                onClick={navigateSearch}
-              >
-                Buscar
-              </Button>
-            </GridItem>
-          </GridContainer>
+          <form onSubmit={navigateSearch} style={{ width: "100%" }}>
+            <GridContainer alignItems="alignItems">
+              <GridItem xs={12} sm={12} md={9}>
+                <CustomInput
+                  labelText="Digite algo que deseje buscar"
+                  id="search"
+                  white
+                  value={search}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                  }}
+                  formControlProps={{
+                    fullWidth: true,
+                  }}
+                  style={{
+                    paddingLeft: "10px",
+                  }}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={12} md={2}>
+                <Button
+                  color="primary"
+                  size="lg"
+                  rel="noopener noreferrer"
+                  onClick={navigateSearch}
+                >
+                  Buscar
+                </Button>
+              </GridItem>
+            </GridContainer>
+          </form>
         </div>
       </Parallax>
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
           <Categories categories={categories} />
-          <Courses />
+          {courses.length > 0 ? <Courses data={courses.slice(0, 3)} /> : null}
         </div>
       </div>
       <Footer />

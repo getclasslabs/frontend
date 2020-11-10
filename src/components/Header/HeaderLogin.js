@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -58,6 +59,13 @@ export default function Header(props) {
       }
     };
   });
+
+  React.useEffect(() => {
+    if (props.search) {
+      setSearch(props.search);
+    }
+  }, [props]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -115,32 +123,39 @@ export default function Header(props) {
             alignItems="alignItems"
             style={{ paddingTop: "10px", width: "50%" }}
           >
-            <GridItem xs={6} sm={6} md={10}>
-              <CustomInput
-                labelText="Buscar..."
-                id="search"
-                value={search}
-                onChange={(event) => {
-                  setSearch(event.target.value);
-                }}
-                formControlProps={{
-                  fullWidth: true,
-                }}
-                style={{
-                  paddingLeft: "10px",
-                }}
-              />
-            </GridItem>
-            <GridItem xs={2} sm={2} md={2}>
-              <Button
-                color="primary"
-                size="lg"
-                rel="noopener noreferrer"
-                onClick={navigateSearch}
+            <form onSubmit={navigateSearch} style={{ width: "100%" }}>
+              <GridContainer
+                alignItems="alignItems"
+                style={{ paddingTop: "10px", width: "100%" }}
               >
-                <Search />
-              </Button>
-            </GridItem>
+                <GridItem xs={6} sm={6} md={10}>
+                  <CustomInput
+                    labelText="Buscar..."
+                    id="search"
+                    value={search}
+                    onChange={(event) => {
+                      setSearch(event.target.value);
+                    }}
+                    formControlProps={{
+                      fullWidth: true,
+                    }}
+                    style={{
+                      paddingLeft: "10px",
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={2} sm={2} md={2}>
+                  <Button
+                    color="primary"
+                    size="lg"
+                    rel="noopener noreferrer"
+                    onClick={navigateSearch}
+                  >
+                    <Search />
+                  </Button>
+                </GridItem>
+              </GridContainer>
+            </form>
           </GridContainer>
         ) : null}
 

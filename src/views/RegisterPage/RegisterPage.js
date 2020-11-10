@@ -140,7 +140,7 @@ export default function RegisterPage(props) {
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={6}>
               <Card className={classes[cardAnimaton]}>
-                <form className={classes.form}>
+                <form className={classes.form} onSubmit={handleSubmit}>
                   <CardHeader className={classes.cardHeader}>
                     <h2>Crie sua Conta</h2>
                   </CardHeader>
@@ -341,6 +341,7 @@ export default function RegisterPage(props) {
                         simple
                         color="primary"
                         size="lg"
+                        type="submit"
                         onClick={handleSubmit}
                       >
                         Registrar

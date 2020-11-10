@@ -32,8 +32,6 @@ import styles from "assets/jss/material-kit-react/views/homePage.js";
 import image2 from "assets/img/background/2.jpg";
 import image4 from "assets/img/background/4.jpg";
 
-import violaoImage from "assets/img/category/violao.jpg";
-
 import api from "services/api";
 
 const pictureArray = [image2, image4];
@@ -141,6 +139,7 @@ export default function ResultsPage(props) {
         brand="Material Kit React"
         rightLinks={<HeaderLinks />}
         fixed
+        search={search}
         changeColorOnScroll={{
           height: 150,
           color: "white",
@@ -220,7 +219,11 @@ export default function ResultsPage(props) {
                                     style={{ marginBottom: "20px" }}
                                   >
                                     <Card
-                                      image={violaoImage}
+                                      image={`http://localhost:3000/course/images/${
+                                        eachCourse.image
+                                          ? eachCourse.image
+                                          : "default.png"
+                                      }`}
                                       name={eachCourse.name}
                                       description={eachCourse.description}
                                       category={eachCourse.categoryName}
@@ -307,7 +310,11 @@ export default function ResultsPage(props) {
                                     style={{ marginBottom: "20px" }}
                                   >
                                     <Card
-                                      image={violaoImage}
+                                      image={`http://localhost:3000/course/images/${
+                                        eachCategory.image
+                                          ? eachCategory.image
+                                          : "default.png"
+                                      }`}
                                       name={eachCategory.name}
                                       description={eachCategory.description}
                                       category={eachCategory.categoryName}

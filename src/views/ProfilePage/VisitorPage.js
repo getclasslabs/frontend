@@ -53,9 +53,8 @@ export default function VisitorPage(props) {
   const history = useHistory();
   const { nickname } = useParams();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const [courses, setCourses] = useState([]);
+  const [coursesModalOpen, setCoursesModalOpen] = useState(false);
 
   const userLogged = useSelector((state) => state.user.profile);
   const [user, setUser] = useState({});
@@ -94,6 +93,19 @@ export default function VisitorPage(props) {
   useEffect(() => {
     getUserByNickname();
   }, []);
+
+  async function getCourses() {
+    const response = await api.get(`courses/from/${user.id}`, {
+      headers: { Authorization: "Bearer " + userLogged.jwt },
+    });
+
+    setCourses(response.data);
+  }
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    getCourses();
+  }, [user]);
 
   const { ...rest } = props;
   const imageClasses = classNames(
@@ -199,46 +211,56 @@ export default function VisitorPage(props) {
         <GridContainer justify="center">
           <GridItem xs={12} sm={12} md={8}>
             <List className={classes.list}>
-              <ListItem>
-                <ListItemText
-                  primary="Curso Completo GO Lang"
-                  secondary="Aprenda do Básico ao avançado da nova linguagem da Google."
-                />
-                <Button justIcon round color="primary">
-                  <PlayArrowIcon />
-                </Button>
-              </ListItem>
-              <Divider component="li" />
-              <ListItem>
-                <ListItemText
-                  primary="Curso Completo PHP"
-                  secondary="Aprenda do Básico ao avançado de uma das liguagens mais usadas do mundo."
-                />
-                <Button justIcon round color="primary">
-                  <PlayArrowIcon />
-                </Button>
-              </ListItem>
-              <Divider component="li" />
-              <ListItem>
-                <ListItemText
-                  primary="Curso Violão"
-                  secondary="Aprenda o básico do violão para alegrar os churrascos em família."
-                />
-                <Button justIcon round color="primary">
-                  <PlayArrowIcon />
-                </Button>
-              </ListItem>
-              <Divider component="li" />
-              <ListItem>
-                <ListItemText
-                  primary="Curso MasterChef"
-                  secondary="Seu omelete nunca mais será o mesmo!"
-                />
-                <Button justIcon round color="primary">
-                  <PlayArrowIcon />
-                </Button>
-              </ListItem>
+              {courses.length > 0 ? (
+                courses.slice(0, 5).map((course) => (
+                  <>
+                    <ListItem>
+                      <ListItemText
+                        primary={course.name}
+                        secondary={course.description}
+                      />
+                      <Button
+                        justIcon
+                        round
+                        color="primary"
+                        onClick={() =>
+                          history.push(`/courses/detail/${course.id}`)
+                        }
+                      >
+                        <PlayArrowIcon />
+                      </Button>
+                    </ListItem>
+                    <Divider component="li" />
+                  </>
+                ))
+              ) : (
+                <GridItem xs={12} sm={12} md={12}>
+                  <h2
+                    style={{
+                      color: "#3C4858",
+                      textAlign: "center",
+                    }}
+                  >
+                    Não encontramos nenhum Curso...
+                  </h2>
+                  <div style={{ flex: 1, margin: "0 45%" }}>
+                    <SentimentVeryDissatisfiedIcon
+                      style={{ fontSize: 80, color: "#3C4858" }}
+                    />
+                  </div>
+                </GridItem>
+              )}
             </List>
+            {courses.length > 0 ? (
+              <Button
+                color="primary"
+                className={classes.navLinkLogout}
+                style={{ marginTop: 10 }}
+                onClick={() => setCoursesModalOpen(true)}
+              >
+                Ver todos os cursos
+              </Button>
+            ) : null}
           </GridItem>
         </GridContainer>
       ),
@@ -341,6 +363,7 @@ export default function VisitorPage(props) {
                                             <ListItem>
                                               <ListItemText
                                                 primary={review.comment}
+                                                secondary={`${review.first_name} ${review.last_name}`}
                                               />
                                               <Box
                                                 component="fieldset"
@@ -418,7 +441,10 @@ export default function VisitorPage(props) {
               {reviews.map((review) => (
                 <>
                   <ListItem>
-                    <ListItemText primary={review.comment} />
+                    <ListItemText
+                      primary={review.comment}
+                      secondary={`${review.first_name} ${review.last_name}`}
+                    />
                     <Box component="fieldset" mb={3} borderColor="transparent">
                       <StyledRating
                         name="customized-color"
@@ -431,6 +457,38 @@ export default function VisitorPage(props) {
                         readOnly
                       />
                     </Box>
+                  </ListItem>
+                  <Divider component="li" />
+                </>
+              ))}
+            </List>
+          </GridContainer>
+        ) : null}
+      </CustomModal>
+      <CustomModal open={coursesModalOpen} setOpen={setCoursesModalOpen}>
+        {courses ? (
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={12} md={12}>
+              <h3>Todos os Cursos:</h3>
+            </GridItem>
+            <List className={classes.list}>
+              {courses.map((course) => (
+                <>
+                  <ListItem>
+                    <ListItemText
+                      primary={course.name}
+                      secondary={course.description}
+                    />
+                    <Button
+                      justIcon
+                      round
+                      color="primary"
+                      onClick={() =>
+                        history.push(`/courses/detail/${course.id}`)
+                      }
+                    >
+                      <PlayArrowIcon />
+                    </Button>
                   </ListItem>
                   <Divider component="li" />
                 </>

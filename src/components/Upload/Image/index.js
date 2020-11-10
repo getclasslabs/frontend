@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { IoMdImage } from "react-icons/io";
 import { useField } from "@rocketseat/unform";
 import PropTypes from "prop-types";
@@ -7,10 +8,10 @@ import api from "~/services/api";
 
 import { Container } from "./styles";
 
-export default function Image({ image }) {
+export default function Image({ image, id }) {
+  const userLogged = useSelector((state) => state.user.profile);
   const { defaultValue, registerField } = useField("image");
 
-  const [file, setFile] = useState(defaultValue && defaultValue.id);
   const [preview, setPreview] = useState(defaultValue && defaultValue.url);
 
   const ref = useRef();
@@ -27,22 +28,28 @@ export default function Image({ image }) {
 
   useEffect(() => {
     if (image) {
-      setFile(image.id);
-      setPreview(image.url);
+      setPreview(image);
     }
   }, [image]);
 
   async function handleChange(e) {
     const data = new FormData();
 
-    data.append("file", e.target.files[0]);
+    data.append("image", e.target.files[0]);
 
-    const response = await api.post("files", data);
+    if (preview) {
+      await api.delete(`courses/image/${id}`, {
+        headers: { Authorization: "Bearer " + userLogged.jwt },
+      });
+    }
 
-    const { id, url } = response.data;
+    const response = await api.put(`courses/image/${id}`, data, {
+      headers: { Authorization: "Bearer " + userLogged.jwt },
+    });
 
-    setFile(id);
-    setPreview(url);
+    const { image } = response.data;
+
+    setPreview(`http://localhost:3000/course/images/${image}`);
   }
 
   return (
@@ -64,7 +71,6 @@ export default function Image({ image }) {
           type="file"
           id="image"
           accept="image/*"
-          data-file={file}
           onChange={handleChange}
           ref={ref}
         />
@@ -78,4 +84,5 @@ Image.propTypes = {
     id: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
   }).isRequired,
+  id: PropTypes.string.isRequired,
 };

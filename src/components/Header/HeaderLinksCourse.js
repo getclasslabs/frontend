@@ -37,7 +37,7 @@ export default function HeaderLinks(props) {
               <Button
                 color="primary"
                 onClick={(e) => history.push(`/courses/edit/${courseId}`)}
-                className={classes.navLink}
+                className={classes.navLinkLogout}
               >
                 Editar
               </Button>
@@ -46,7 +46,7 @@ export default function HeaderLinks(props) {
               <Button
                 color="danger"
                 onClick={() => setModal(true)}
-                className={classes.navLink}
+                className={classes.navLinkLogout}
               >
                 Deletar
               </Button>

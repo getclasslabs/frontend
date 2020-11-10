@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // @material-ui/core components
@@ -8,6 +9,7 @@ import { useHistory } from "react-router-dom";
 
 import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 // core components
 import Header from "components/Header/HeaderLogin.js";
 import Footer from "components/Footer/FooterLogin.js";
@@ -21,25 +23,34 @@ import styles from "assets/jss/material-kit-react/views/homePage.js";
 
 import image from "assets/img/background/2.jpg";
 
-import violaoImage from "assets/img/category/violao.jpg";
-import esportesImage from "assets/img/category/esportes.jpg";
-import quimicaImage from "assets/img/category/quimica.jpg";
+import api from "services/api";
 
 const dashboardRoutes = [];
 
 const useStyles = makeStyles(styles);
 
 export default function CoursesPage(props) {
+  const userLogged = useSelector((state) => state.user.profile);
   const classes = useStyles();
   const history = useHistory();
   const { ...rest } = props;
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const [openMessage, setOpenMessage] = useState(false);
   const [message, setMessage] = useState("");
+  const [courses, setCourses] = useState([]);
+
+  async function getCourses() {
+    const response = await api.get("courses/mine", {
+      headers: { Authorization: "Bearer " + userLogged.jwt },
+    });
+
+    setCourses(response.data);
+  }
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    getCourses();
+  }, []);
 
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -69,7 +80,7 @@ export default function CoursesPage(props) {
         color="transparent"
         routes={dashboardRoutes}
         brand="Material Kit React"
-        rightLinks={<HeaderLinks />}
+        rightLinks={<HeaderLinks isTeacher={userLogged.register === 1} />}
         fixed
         changeColorOnScroll={{
           height: 150,
@@ -104,48 +115,45 @@ export default function CoursesPage(props) {
               >
                 <GridItem xs={12} sm={12} md={8}>
                   <GridContainer>
-                    <GridItem
-                      cs={12}
-                      sm={12}
-                      md={6}
-                      style={{ marginBottom: "20px" }}
-                      onClick={() =>
-                        history.push({
-                          pathname: "/courses/detail/123",
-                          state: { type: "student" },
-                        })
-                      }
-                    >
-                      <Card image={violaoImage} name="Violão" />
-                    </GridItem>
-                    <GridItem
-                      cs={12}
-                      sm={12}
-                      md={6}
-                      style={{ marginBottom: "20px" }}
-                      onClick={() =>
-                        history.push({
-                          pathname: "/courses/detail/123",
-                          state: { type: "" },
-                        })
-                      }
-                    >
-                      <Card image={esportesImage} name="Esportes" />
-                    </GridItem>
-                    <GridItem
-                      cs={12}
-                      sm={12}
-                      md={6}
-                      style={{ marginBottom: "20px" }}
-                      onClick={() =>
-                        history.push({
-                          pathname: "/courses/detail/123",
-                          state: { type: "teacher" },
-                        })
-                      }
-                    >
-                      <Card image={quimicaImage} name="Química" />
-                    </GridItem>
+                    {courses.length > 0 ? (
+                      courses.map((course) => (
+                        <GridItem
+                          cs={12}
+                          sm={12}
+                          md={6}
+                          style={{ marginBottom: "20px" }}
+                          key={course.id}
+                        >
+                          <Card
+                            image={`http://localhost:3000/course/images/${
+                              course.image ? course.image : "default.png"
+                            }`}
+                            name={course.name}
+                            description={course.description}
+                            category={course.categoryName}
+                            onClick={() =>
+                              history.push(`/courses/detail/${course.id}`)
+                            }
+                          />
+                        </GridItem>
+                      ))
+                    ) : (
+                      <GridItem xs={12} sm={12} md={12}>
+                        <h2
+                          style={{
+                            color: "#3C4858",
+                            textAlign: "center",
+                          }}
+                        >
+                          Não encontramos nenhum Curso...
+                        </h2>
+                        <div style={{ flex: 1, margin: "0 45%" }}>
+                          <SentimentVeryDissatisfiedIcon
+                            style={{ fontSize: 80, color: "#3C4858" }}
+                          />
+                        </div>
+                      </GridItem>
+                    )}
                   </GridContainer>
                 </GridItem>
               </GridContainer>

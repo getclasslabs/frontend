@@ -109,7 +109,7 @@ export default function LoginPage(props) {
           <GridContainer justify="center">
             <GridItem xs={12} sm={12} md={4}>
               <Card className={classes[cardAnimaton]}>
-                <form className={classes.form}>
+                <form className={classes.form} onSubmit={handleSubmit}>
                   <CardHeader className={classes.cardHeader}>
                     <h2>Login</h2>
                   </CardHeader>
@@ -177,6 +177,7 @@ export default function LoginPage(props) {
                         simple
                         color="primary"
                         size="lg"
+                        type="submit"
                         onClick={handleSubmit}
                       >
                         Acessar
