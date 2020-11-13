@@ -50,6 +50,16 @@ export default function TeacherDetail({ props, data }) {
   const [modalReceiptOpen, setModalReceiptOpen] = useState(false);
   const [modalContent, setModalContent] = useState(false);
 
+  const [students, setStudents] = useState([]);
+
+  async function getStudents() {
+    const response = await api.get(`courses/students/${course_id}`, {
+      headers: { Authorization: `Bearer ${userLogged.jwt}` },
+    });
+
+    setStudents(response.data);
+  }
+
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
@@ -92,6 +102,7 @@ export default function TeacherDetail({ props, data }) {
 
   useEffect(() => {
     getCourse();
+    getStudents();
   }, []);
 
   async function handleFinish() {
@@ -217,7 +228,14 @@ export default function TeacherDetail({ props, data }) {
               </Button>
             </GridItem>
             <GridItem cs={12} sm={12} md={6}>
-              <Chat isLong />
+              <Chat
+                isLong
+                roomId={course_id}
+                userId={userLogged.userId}
+                teacher={teacher}
+                students={students}
+                history={history}
+              />
             </GridItem>
             <GridItem cs={12} sm={12} md={6}>
               <Students
@@ -225,6 +243,7 @@ export default function TeacherDetail({ props, data }) {
                 setModalContent={setModalContent}
                 setModalOpen={setModalOpen}
                 setModalReciptOpen={setModalReceiptOpen}
+                updateStudents={getStudents}
               />
             </GridItem>
             <CustomModal

@@ -40,6 +40,16 @@ export default function StudentDetails({ data }) {
   const [teacher, setTeacher] = useState([]);
   const [course, setCourse] = useState([]);
 
+  const [students, setStudents] = useState([]);
+
+  async function getStudents() {
+    const response = await api.get(`courses/students/${course_id}`, {
+      headers: { Authorization: `Bearer ${userLogged.jwt}` },
+    });
+
+    setStudents(response.data);
+  }
+
   function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
@@ -87,6 +97,7 @@ export default function StudentDetails({ data }) {
 
   useEffect(() => {
     getCourse();
+    getStudents();
   }, []);
 
   return (
@@ -207,7 +218,15 @@ export default function StudentDetails({ data }) {
               openMessage={setOpenMessage}
             />
           </GridContainer>
-          {course.registered ? <Chat /> : null}
+          {course.registered ? (
+            <Chat
+              roomId={course_id}
+              userId={userLogged.userId}
+              teacher={teacher}
+              students={students}
+              history={history}
+            />
+          ) : null}
         </div>
       </div>
       <Snackbar

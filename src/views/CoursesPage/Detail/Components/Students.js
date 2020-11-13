@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import SentimentVeryDissatisfiedIcon from "@material-ui/icons/SentimentVeryDissatisfied";
 
 import Lightbox from "react-awesome-lightbox";
 import "react-awesome-lightbox/build/style.css";
@@ -25,6 +26,7 @@ export default function Students({
   setModalContent,
   setModalOpen,
   setModalReciptOpen,
+  updateStudents,
 }) {
   const userLogged = useSelector((state) => state.user.profile);
   const history = useHistory();
@@ -40,6 +42,7 @@ export default function Students({
     const response = await api.get(`courses/solicitations/${id}`, {
       headers: { Authorization: `Bearer ${userLogged.jwt}` },
     });
+    console.log(response.data);
 
     setSolicitations(response.data);
   }
@@ -48,7 +51,7 @@ export default function Students({
     const response = await api.get(`courses/students/${id}`, {
       headers: { Authorization: `Bearer ${userLogged.jwt}` },
     });
-
+    console.log(response.data);
     setStudents(response.data);
   }
 
@@ -74,6 +77,27 @@ export default function Students({
       setStudents([]);
       getStudents();
       getSolicitations();
+      updateStudents();
+      setLoading(false);
+    } catch (err) {
+      setError(true);
+      setLoading(false);
+    }
+  }
+
+  async function handleRemove(solicitation) {
+    setLoading(true);
+
+    try {
+      await api.delete(`courses/remove/${solicitation}`, {
+        headers: { Authorization: "Bearer " + userLogged.jwt },
+      });
+
+      setSolicitations([]);
+      setStudents([]);
+      getStudents();
+      getSolicitations();
+      updateStudents();
       setLoading(false);
     } catch (err) {
       setError(true);
@@ -104,19 +128,36 @@ export default function Students({
                   padding: 5,
                 }}
               >
-                <p
-                  style={{ marginLeft: 10, fontSize: 18, cursor: "pointer" }}
-                  onClick={() =>
-                    history.push({
-                      pathname: `/profile/${student.nickname}`,
-                    })
-                  }
-                >
-                  <b>
-                    {student.firstName} {student.lastName}
-                  </b>{" "}
-                  - <i style={{ fontSize: 12 }}>Aprovado</i>
-                </p>
+                <GridContainer alignItems="alignItems">
+                  <GridItem xs={12} sm={12} md={8}>
+                    <p
+                      style={{
+                        marginLeft: 10,
+                        fontSize: 18,
+                        cursor: "pointer",
+                      }}
+                      onClick={() =>
+                        history.push({
+                          pathname: `/profile/${student.nickname}`,
+                        })
+                      }
+                    >
+                      <b>
+                        {student.firstName} {student.lastName}
+                      </b>{" "}
+                      - <i style={{ fontSize: 12 }}>Aprovado</i>
+                    </p>
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={3}>
+                    <Button
+                      color="danger"
+                      rel="noopener noreferrer"
+                      onClick={() => handleRemove(student.ingressId)}
+                    >
+                      Remover
+                    </Button>
+                  </GridItem>
+                </GridContainer>
               </div>
             ))
           : null}
@@ -132,6 +173,7 @@ export default function Students({
               <div
                 key={solicitation.studentID}
                 style={{
+                  width: "100%",
                   backgroundColor: "RGB(255, 0, 0, 0.2)",
                   textAlign: "left",
                   marginBottom: 20,
@@ -139,7 +181,7 @@ export default function Students({
                 }}
               >
                 <GridContainer alignItems="alignItems">
-                  <GridItem xs={12} sm={12} md={8}>
+                  <GridItem xs={12} sm={12} md={6}>
                     <p
                       style={{
                         marginLeft: 10,
@@ -195,7 +237,7 @@ export default function Students({
                       </a>
                     ) : null}
                   </GridItem>
-                  <GridItem xs={12} sm={12} md={4}>
+                  <GridItem xs={12} sm={12} md={3}>
                     <Button
                       color="primary"
                       rel="noopener noreferrer"
@@ -206,10 +248,39 @@ export default function Students({
                       Aprovar
                     </Button>
                   </GridItem>
+                  <GridItem xs={12} sm={12} md={3}>
+                    <Button
+                      color="danger"
+                      rel="noopener noreferrer"
+                      onClick={() => handleRemove(solicitation.id)}
+                    >
+                      Remover
+                    </Button>
+                  </GridItem>
                 </GridContainer>
               </div>
             ))
           : null}
+
+        {students.length === 0 && solicitations.length === 0 ? (
+          <GridContainer alignItems="alignItems">
+            <GridItem xs={12} sm={12} md={12} style={{ marginTop: 50 }}>
+              <h4
+                style={{
+                  color: "#3C4858",
+                  textAlign: "center",
+                }}
+              >
+                Ainda não há alunos ou solicitações...
+              </h4>
+              <div style={{ flex: 1, margin: "0 45%" }}>
+                <SentimentVeryDissatisfiedIcon
+                  style={{ fontSize: 40, color: "#3C4858" }}
+                />
+              </div>
+            </GridItem>
+          </GridContainer>
+        ) : null}
       </GridItem>
     </GridContainer>
   ) : (
