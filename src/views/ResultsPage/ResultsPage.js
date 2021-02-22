@@ -120,15 +120,21 @@ export default function ResultsPage(props) {
   }, [location]);
 
   useEffect(() => {
-    searchTeacher();
+    if (search !== "") {
+      searchTeacher();
+    }
   }, [search, teachersPage]);
 
   useEffect(() => {
-    searchCourse();
+    if (search !== "") {
+      searchCourse();
+    }
   }, [search, coursePage]);
 
   useEffect(() => {
-    searchCategory();
+    if (search !== "") {
+      searchCategory();
+    }
   }, [search, categoryPage]);
 
   return (

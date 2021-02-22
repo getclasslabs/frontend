@@ -84,7 +84,7 @@ export default function StudentDetails({ data }) {
       history.push("/courses");
     }
     setCourse(response.data);
-
+    console.log(response.data);
     const responseTeacher = await api.get(
       `user/teacher/${response.data.teacher_id}`,
       {
@@ -182,26 +182,34 @@ export default function StudentDetails({ data }) {
                   curso!
                 </p>
               ) : null}
-              <Button
-                color={course.registered ? "primary" : ""}
-                className={classes.navLinkLogout}
-                style={{ height: 80, width: "80%" }}
-                onClick={
-                  course.registered
-                    ? () =>
-                        history.push({
-                          pathname: "/courses/view",
-                          state: {
-                            id: course_id,
-                            name: course.name,
-                            periods: course.periods,
-                          },
-                        })
-                    : null
-                }
-              >
-                Acessar aula
-              </Button>
+              {course.type === "PRESENCIAL" ? (
+                course.registered ? (
+                  <p style={{ fontSize: 18, fontWeight: "bold" }}>
+                    Local de Aula: {course.place}
+                  </p>
+                ) : null
+              ) : (
+                <Button
+                  color={course.registered ? "primary" : ""}
+                  className={classes.navLinkLogout}
+                  style={{ height: 80, width: "80%" }}
+                  onClick={
+                    course.registered
+                      ? () =>
+                          history.push({
+                            pathname: "/courses/view",
+                            state: {
+                              id: course_id,
+                              name: course.name,
+                              periods: course.periods,
+                            },
+                          })
+                      : null
+                  }
+                >
+                  Acessar aula
+                </Button>
+              )}
               <Button
                 color={course.registered ? "primary" : ""}
                 className={classes.navLinkLogout}

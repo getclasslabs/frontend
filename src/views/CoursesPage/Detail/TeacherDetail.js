@@ -47,6 +47,7 @@ export default function TeacherDetail({ props, data }) {
   const [admin, setAdmin] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalCancelOpen, setModalCancelOpen] = useState(false);
   const [modalReceiptOpen, setModalReceiptOpen] = useState(false);
   const [modalContent, setModalContent] = useState(false);
 
@@ -133,7 +134,7 @@ export default function TeacherDetail({ props, data }) {
         rightLinks={
           <HeaderLinks
             courseId={admin ? course_id : null}
-            setModal={setModalOpen}
+            setModal={setModalCancelOpen}
           />
         }
         fixed
@@ -209,23 +210,31 @@ export default function TeacherDetail({ props, data }) {
               <p style={{ fontSize: 12, fontStyle: "italic" }}>
                 Sua aula fica disponível aqui:
               </p>
-              <Button
-                color="primary"
-                className={classes.navLinkLogout}
-                style={{ height: 80, width: "80%" }}
-                onClick={() =>
-                  history.push({
-                    pathname: "/courses/view",
-                    state: {
-                      id: course_id,
-                      name: course.name,
-                      periods: course.periods,
-                    },
-                  })
-                }
-              >
-                Acessar aula
-              </Button>
+              {course.type === "PRESENCIAL" ? (
+                course.registered ? (
+                  <p style={{ fontSize: 18, fontWeight: "bold" }}>
+                    Local de Aula: {course.place}
+                  </p>
+                ) : null
+              ) : (
+                <Button
+                  color="primary"
+                  className={classes.navLinkLogout}
+                  style={{ height: 80, width: "80%" }}
+                  onClick={() =>
+                    history.push({
+                      pathname: "/courses/view",
+                      state: {
+                        id: course_id,
+                        name: course.name,
+                        periods: course.periods,
+                      },
+                    })
+                  }
+                >
+                  Acessar aula
+                </Button>
+              )}
             </GridItem>
             <GridItem cs={12} sm={12} md={6}>
               <Chat
@@ -247,8 +256,8 @@ export default function TeacherDetail({ props, data }) {
               />
             </GridItem>
             <CustomModal
-              open={modalOpen}
-              setOpen={setModalOpen}
+              open={modalCancelOpen}
+              setOpen={setModalCancelOpen}
               handleFinish={handleFinish}
             >
               <GridItem cs={12} sm={12} md={12}>

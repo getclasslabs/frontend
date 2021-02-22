@@ -14,7 +14,7 @@ import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 
-const SOCKET_SERVER_URL = "ws://localhost:8080/connect/";
+const SOCKET_SERVER_URL = "ws://localhost:8082/connect/";
 
 export default class Chat extends Component {
   state = {

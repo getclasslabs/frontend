@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 // import BuyDetail from "./Detail/BuyDetail.js";
 import StudentDetail from "./Detail/StudentDetail.js";
@@ -50,8 +51,15 @@ export default function CoursesDetail(props) {
     if (response.data.solicitation) {
       setStudent(true);
     }
-
-    if (response.data.maxStudents <= response.data.studentsRegistered) {
+    console.log(response.data);
+    var now = moment();
+    if (
+      now.isAfter(response.data.startDay) &&
+      response.data.allowStudentsAfterStartNum === 0
+    ) {
+      setBuy(false);
+      setBuyMessage("As aulas já iniciaram!");
+    } else if (response.data.maxStudents <= response.data.studentsRegistered) {
       setBuy(false);
       setBuyMessage("Número de vagas esgotadas por enquanto!");
     } else {
